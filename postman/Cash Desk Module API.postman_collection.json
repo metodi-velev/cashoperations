@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "733eba09-9462-4d18-b383-4fb9da30edaa",
+		"name": "Cash Desk Module API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4313427"
+	},
+	"item": [
+		{
+			"name": "withdrawal-bgn-linda",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"BGN\",\r\n        \"operationType\": \"WITHDRAWAL\",\r\n        \"amount\": 100,\r\n        \"denominations\": [\r\n            { \"quantity\": 5, \"value\": 10 },\r\n            { \"quantity\": 1, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-operations-url}}",
+					"host": [
+						"{{cash-operations-url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "withdrawal-eur-linda",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"EUR\",\r\n        \"operationType\": \"WITHDRAWAL\",\r\n        \"amount\": 500,\r\n        \"denominations\": [\r\n            { \"quantity\": 10, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-operations-url}}",
+					"host": [
+						"{{cash-operations-url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deposit-bgn-linda",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"BGN\",\r\n        \"operationType\": \"DEPOSIT\",\r\n        \"amount\": 600,\r\n        \"denominations\": [\r\n            { \"quantity\": 10, \"value\": 10 },\r\n            { \"quantity\": 10, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-operations-url}}",
+					"host": [
+						"{{cash-operations-url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deposit-eur-linda",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"EUR\",\r\n        \"operationType\": \"DEPOSIT\",\r\n        \"amount\": 200,\r\n        \"denominations\": [\r\n            { \"quantity\": 5, \"value\": 20 },\r\n            { \"quantity\": 2, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-operations-url}}",
+					"host": [
+						"{{cash-operations-url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cash-balance-no-filters",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"EUR\",\r\n        \"operationType\": \"DEPOSIT\",\r\n        \"amount\": 200,\r\n        \"denominations\": [\r\n            { \"quantity\": 5, \"value\": 20 },\r\n            { \"quantity\": 2, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-balance-url}}",
+					"host": [
+						"{{cash-balance-url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cash-balance-cashier-filter",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"EUR\",\r\n        \"operationType\": \"DEPOSIT\",\r\n        \"amount\": 200,\r\n        \"denominations\": [\r\n            { \"quantity\": 5, \"value\": 20 },\r\n            { \"quantity\": 2, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-balance-url}}?cashier=linda",
+					"host": [
+						"{{cash-balance-url}}"
+					],
+					"query": [
+						{
+							"key": "cashier",
+							"value": "linda"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cash-balance-all-filters",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"EUR\",\r\n        \"operationType\": \"DEPOSIT\",\r\n        \"amount\": 200,\r\n        \"denominations\": [\r\n            { \"quantity\": 5, \"value\": 20 },\r\n            { \"quantity\": 2, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-balance-url}}?dateFrom=2025-02-28T00:50:00&dateTo=2025-03-30T00:00:00&cashier=linda",
+					"host": [
+						"{{cash-balance-url}}"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2025-02-28T00:50:00"
+						},
+						{
+							"key": "dateTo",
+							"value": "2025-03-30T00:00:00"
+						},
+						{
+							"key": "cashier",
+							"value": "linda"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cash-balance-dateFrom-dateTo-filters",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "FIB-X-AUTH",
+						"value": "{{authKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"cashierName\": \"LINDA\",\r\n        \"currency\": \"EUR\",\r\n        \"operationType\": \"DEPOSIT\",\r\n        \"amount\": 200,\r\n        \"denominations\": [\r\n            { \"quantity\": 5, \"value\": 20 },\r\n            { \"quantity\": 2, \"value\": 50 }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cash-balance-url}}?dateFrom=2025-02-28T00:50:00&dateTo=2025-03-30T00:00:00",
+					"host": [
+						"{{cash-balance-url}}"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2025-02-28T00:50:00"
+						},
+						{
+							"key": "dateTo",
+							"value": "2025-03-30T00:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
