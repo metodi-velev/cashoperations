@@ -162,6 +162,7 @@ A sample postman collection and an environment can be found in the folder `casho
 - `Cash Desk Module API.postman_collection.json` contains sample API calls.
 - `Cash Desk Environment.postman_environment.json` contains the environment settings for the API calls.
 - Both must be imported in Postman to properly test the API calls.
+- Set the request header key `FIB-X-AUTH` to the `{{authKey}}` value defined in the environment settings. The value for this header is also defined in the `application.properties` file. 
 
 ---
 

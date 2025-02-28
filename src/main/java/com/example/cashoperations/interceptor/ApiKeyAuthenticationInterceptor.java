@@ -8,15 +8,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class CustomHeaderInterceptor implements HandlerInterceptor {
+public class ApiKeyAuthenticationInterceptor implements HandlerInterceptor {
 
-    @Value("${fib.auth.api-key}")
-    private String apiKey;
+    private final String apiKey;
+
+    public ApiKeyAuthenticationInterceptor(@Value("${fib.auth.api-key}") String apiKey) {
+        this.apiKey = apiKey;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (!apiKey.equals(request.getHeader("FIB-X-AUTH"))) {
-            throw new InvalidApiKeyException("Invalid API key");
+            throw new InvalidApiKeyException("Invalid API key.");
         }
         return true;
     }

@@ -1,5 +1,6 @@
 package com.example.cashoperations.exception;
 
+import com.example.cashoperations.utils.LocalDateTimeFormatter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 status,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.parse(LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER), LocalDateTimeFormatter.TIMESTAMP_FORMATTER)
         );
         return new ResponseEntity<>(errorResponseDTO, status);
     }

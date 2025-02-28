@@ -6,6 +6,7 @@ import com.example.cashoperations.model.Cashier;
 import com.example.cashoperations.model.Currency;
 import com.example.cashoperations.model.Denomination;
 import com.example.cashoperations.repository.CashierRepository;
+import com.example.cashoperations.utils.LocalDateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CashDeskService {
-
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Autowired
     private final CashierRepository cashierRepository;
@@ -177,7 +175,7 @@ public class CashDeskService {
     }
 
     private void logTransaction(String operation, String cashierName, CashOperationRequest request) {
-        String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMATTER);
+        String timestamp = LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER);
         String logEntry = String.format("%s - %s: %s %s%n", timestamp, operation, cashierName, request);
         try {
             Files.write(Paths.get(CashierRepository.TRANSACTION_FILE), logEntry.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -187,7 +185,7 @@ public class CashDeskService {
     }
 
     private void logBalances() {
-        String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMATTER);
+        String timestamp = LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER);
         StringBuilder sb = new StringBuilder();
         CashierRepository.CASHIERS.forEach((name, cashier) -> sb.append(timestamp).append(" - ").append(name).append(": ").append(cashier.getBalances()).append("\n"));
         try {
