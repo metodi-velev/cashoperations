@@ -175,7 +175,6 @@ All transactions and cashiers' balances are logged in the text files `transactio
 Ensure you have the following installed:
 - Java 17
 - Maven
-- Docker (for database and Redis setup)
 
 ### Running Locally
 1. Clone the repository:
