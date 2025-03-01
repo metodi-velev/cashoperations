@@ -3,6 +3,7 @@ package com.example.cashoperations.dto;
 import com.example.cashoperations.model.Currency;
 import com.example.cashoperations.model.Denomination;
 import com.example.cashoperations.validators.ValidCurrency;
+import com.example.cashoperations.validators.ValidDenominations;
 import com.example.cashoperations.validators.ValidOperationType;
 import jakarta.validation.constraints.*;
 
@@ -30,6 +31,7 @@ public class CashOperationRequest {
 
     @NotNull
     @Size(min = 1, message = "Cash operation must contain at least one denomination.")
+    @ValidDenominations(message = "Denominations only of 5, 10, 20, 50 or 100 BGN/EUR are allowed.")
     private List<Denomination> denominations;
 
     public String getCashierName() {
