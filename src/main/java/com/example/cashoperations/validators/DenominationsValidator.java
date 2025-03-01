@@ -59,7 +59,7 @@ public class DenominationsValidator implements ConstraintValidator<ValidDenomina
                 .map(String::valueOf)
                 .toList());
 
-        String validDenominationsString = ALLOWED_DENOMINATIONS.stream().map(String::valueOf).sorted().collect(Collectors.joining(", "));
+        String validDenominationsString = ALLOWED_DENOMINATIONS.stream().sorted().map(String::valueOf).collect(Collectors.joining(", "));
 
         return String.format(
                 "Invalid denominations: %s. Denominations only of %s BGN/EUR are allowed.",
