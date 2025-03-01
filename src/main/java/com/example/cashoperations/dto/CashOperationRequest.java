@@ -29,9 +29,7 @@ public class CashOperationRequest {
     @DecimalMin(value = "10.00", message = "Amount must be at least 10.00.")
     private BigDecimal amount;
 
-    @NotNull
-    @Size(min = 1, message = "Cash operation must contain at least one denomination.")
-    @ValidDenominations(message = "Denominations only of 5, 10, 20, 50 or 100 BGN/EUR are allowed.")
+    @ValidDenominations(allowedValues = " 5, 10, 20, 50, 100 ", message = "Denominations only of 5, 10, 20, 50 or 100 BGN/EUR are allowed.")
     private List<Denomination> denominations;
 
     public String getCashierName() {

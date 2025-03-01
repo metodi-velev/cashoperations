@@ -16,4 +16,6 @@ public @interface ValidDenominations {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    String allowedValues() default " 5, 10, 20, 50, 100";
 }
