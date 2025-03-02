@@ -199,6 +199,11 @@ To execute tests:
 mvn test
 ```
 
+To execute integration tests named `*IT.java`:
+```sh
+mvn verify
+```
+
 ---
 
 ## Monitoring & Logging for Future Releases
