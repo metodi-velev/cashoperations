@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Transactional
@@ -25,9 +26,9 @@ public class CashBalanceController {
 
     @GetMapping("/cash-balance")
     public ResponseEntity<List<CashBalanceResponse>> getTransactions(
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dateFrom,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dateTo,
-            @RequestParam(required = false) String cashier
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Optional<LocalDateTime> dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Optional<LocalDateTime> dateTo,
+            @RequestParam(required = false) Optional<String> cashier
     ) {
         List<CashBalanceResponse> balances = cashBalanceService.getCashBalances(dateFrom, dateTo, cashier);
         return ResponseEntity.ok(balances);
