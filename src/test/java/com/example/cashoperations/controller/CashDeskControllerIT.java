@@ -6,7 +6,6 @@ import com.example.cashoperations.model.Denomination;
 import com.example.cashoperations.repository.CashierRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +35,7 @@ class CashDeskControllerIT {
     @Autowired
     private CashierRepository cashierRepository;
 
+    @Autowired
     private ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
@@ -46,7 +46,6 @@ class CashDeskControllerIT {
 
     @BeforeEach
     public void setup() {
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
