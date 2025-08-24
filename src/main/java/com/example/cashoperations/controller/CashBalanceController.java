@@ -2,6 +2,7 @@ package com.example.cashoperations.controller;
 
 import com.example.cashoperations.dto.CashBalanceResponse;
 import com.example.cashoperations.service.CashBalanceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RestController
 @Transactional
 @Validated
+@SecurityRequirement(name = "fibAuth")
 @RequestMapping("/api/v1")
 public class CashBalanceController {
     @Autowired

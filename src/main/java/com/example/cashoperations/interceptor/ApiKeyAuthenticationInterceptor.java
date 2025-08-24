@@ -18,6 +18,11 @@ public class ApiKeyAuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        String path = request.getRequestURI();
+        // ✅ allow Swagger + API docs without API key
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
+            return true;
+        }
         if (!apiKey.equals(request.getHeader("FIB-X-AUTH"))) {
             throw new InvalidApiKeyException("Invalid API key.");
         }

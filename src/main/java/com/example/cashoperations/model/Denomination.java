@@ -17,6 +17,7 @@ public class Denomination {
     public Denomination(int quantity, int value) {
         this.quantity = quantity;
         this.value = value;
+        this.totalAmount += quantity * value;
         timestamp = LocalDateTime.now();
     }
 
@@ -27,7 +28,7 @@ public class Denomination {
 
     public Denomination(int quantity, int value, int totalAmount) {
         this(quantity, value);
-        this.totalAmount = totalAmount;
+        //this.totalAmount = totalAmount;
         this.timestamp = LocalDateTime.now();
     }
 
@@ -45,6 +46,7 @@ public class Denomination {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+        this.totalAmount = quantity * value;
     }
 
     public LocalDateTime getTimestamp() {

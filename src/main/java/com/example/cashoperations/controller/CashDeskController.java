@@ -2,6 +2,7 @@ package com.example.cashoperations.controller;
 
 import com.example.cashoperations.dto.CashOperationRequest;
 import com.example.cashoperations.service.CashDeskService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Transactional
 @RequiredArgsConstructor
 @Validated
+@SecurityRequirement(name = "fibAuth")
 @RequestMapping("/api/v1")
 public class CashDeskController {
 
