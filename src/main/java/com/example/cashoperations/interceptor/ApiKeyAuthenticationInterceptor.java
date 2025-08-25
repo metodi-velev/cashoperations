@@ -23,6 +23,9 @@ public class ApiKeyAuthenticationInterceptor implements HandlerInterceptor {
         if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
             return true;
         }
+        if (path.startsWith("/h2-console")) {
+            return true;
+        }
         if (!apiKey.equals(request.getHeader("FIB-X-AUTH"))) {
             throw new InvalidApiKeyException("Invalid API key.");
         }

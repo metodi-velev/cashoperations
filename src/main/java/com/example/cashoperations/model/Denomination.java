@@ -1,13 +1,23 @@
 package com.example.cashoperations.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
+@Schema(name = "Denomination", description = "Represents a banknote denomination with its quantity and derived total amount. " +
+        "Allowed banknote values: 5, 10, 20, 50, 100. Timestamp marks when this denomination entry was recorded/updated (UTC).")
 public class Denomination {
+    @Schema(description = "Number of banknotes of the given denomination value", example = "10", minimum = "0")
     private int quantity;
+
+    @Schema(description = "Banknote face value", example = "50", allowableValues = {"5","10","20","50","100"})
     private int value;
+
+    @Schema(description = "Derived total amount = quantity * value", example = "500", readOnly = true)
     private int totalAmount;
+
+    @Schema(description = "Timestamp when the denomination entry was recorded/updated (UTC)", example = "2025-08-24T18:45:00", type = "string", format = "date-time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private LocalDateTime timestamp;
 

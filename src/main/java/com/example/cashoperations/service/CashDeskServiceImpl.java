@@ -40,9 +40,9 @@ public class CashDeskServiceImpl implements CashDeskService {
 
         chechAmountValidity(request);
 
-        if ("DEPOSIT".equals(request.getOperationType())) {
+        if ("DEPOSIT".equalsIgnoreCase(request.getOperationType())) {
             deposit(cashier, request);
-        } else if ("WITHDRAWAL".equals(request.getOperationType())) {
+        } else if ("WITHDRAWAL".equalsIgnoreCase(request.getOperationType())) {
             withdraw(cashier, request);
         }
 
