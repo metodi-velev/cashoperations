@@ -5,6 +5,7 @@ import com.example.cashoperations.model.Denomination;
 import com.example.cashoperations.validators.ValidCurrency;
 import com.example.cashoperations.validators.ValidDenominations;
 import com.example.cashoperations.validators.ValidOperationType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
@@ -34,6 +35,7 @@ public class CashOperationRequest {
             requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Currency cannot be null")
     @ValidCurrency
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Currency currency;
 
     @Schema(description = "Type of cash operation",
