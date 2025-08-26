@@ -112,7 +112,7 @@ Registers a cash operation (deposit/withdrawal) for a cashier.
 |-----------------|----------------------|----------|--------------------------------------------------------------------------------------------------------------|
 | `cashierName`   | `string`             | Yes      | Identifier of the cashier.                                                                                   |
 | `amount`        | `number`             | Yes      | Amount of the transaction (for deposits or for withdrawals).                                                 |
-| `currency`      | `string`             | Yes      | Currency type (e.g., `EUR`, `USD`).                                                                          |
+| `currency`      | `string`             | Yes      | Currency type (e.g., `BGN`, `EUR`).                                                                          |
 | `operationType` | `string`             | Yes | `DEPOSIT` or `WITHDRAWAL` operation.                                                                         |
 | `denominations` | `List<Denomination>` | Yes | List of the denomination of the operation. I.g., `quantity: 2, value: 50` - 2 banknotes of 50 euros or levs. |
 
@@ -144,7 +144,7 @@ Content-Type: application/json
 
 - If the `amount` in the request does not match the overall denominations sum in the request, the API will throw a custom `InvalidAmountException` and will return a `400 Bad Request` status code.
 - `amount` must be a positive value, not null and at leat 10.
-- `currency` must be a valid currency code (e.g., `EUR`, `USD`).
+- `currency` must be a valid currency code (e.g., `BGN`, `EUR`).
 
 #### Sample Error Response
 ```json
@@ -202,6 +202,41 @@ mvn test
 To execute integration tests named `*IT.java`:
 ```sh
 mvn verify
+```
+
+---
+## Docker
+
+### Prerequisites
+- Install [Docker Desktop](https://www.docker.com/products/docker-desktop) and ensure it is running on your machine.
+- Ensure `docker-compose` is available on your system.
+
+To build and start the application container:
+
+```sh
+docker-compose up --build
+```
+
+To stop the application and remove the containers, networks and volumes created by Docker Compose run:
+
+```sh
+docker-compose down
+```
+If you need to rebuild the Docker image without using the cache:
+
+```sh
+docker-compose build --no-cache
+```
+
+```sh
+docker-compose up
+```
+
+To follow the logs of the running containers:
+
+```sh
+docker-compose logs -f
+
 ```
 
 ---

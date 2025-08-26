@@ -1,0 +1,44 @@
+services:
+  cashoperations:
+    image: cashoperations:latest
+    build: .
+    container_name: cashoperations
+    ports:
+      - "8080:8080"
+    environment:
+      # Override Spring property fib.auth.api-key if needed (relaxed binding from ENV var)
+      # Remove or change the value as required
+      - FIB_AUTH_API_KEY=f9Uie8nNf112hx8s
+      - H2_OPTIONS=-webAllowOthers -tcpAllowOthers
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_SETTINGS_URL=jdbc:h2:mem:testdb  # This is the key variable
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_USE_SQL_COMMENTS=true
+      - LOGGING_LEVEL_ORG_HIBERNATE_SQL=DEBUG
+      - LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL=TRACE
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_JPA=DEBUG
+      - LOGGING_LEVEL_ROOT=INFO
+      # Key setting: show all logs in console
+    tty: true
+    stdin_open: true
+    # Force color output
+    command: [ "--spring.output.ansi.enabled=ALWAYS" ]
+    # Uncomment to always restart unless manually stopped
+    # restart: unless-stopped
+    # Healthcheck (optional): consider adding an actuator health endpoint for robust checks
+    # healthcheck:
+    #   test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | findstr UP"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 5
+
+# Usage:
+#   docker compose up -d --build
+#   docker compose logs -f
+#   docker compose down
