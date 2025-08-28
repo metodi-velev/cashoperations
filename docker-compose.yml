@@ -5,6 +5,12 @@ services:
     container_name: cashoperations
     ports:
       - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - cashoperations-network
     environment:
       # Override Spring property fib.auth.api-key if needed (relaxed binding from ENV var)
       # Remove or change the value as required
@@ -42,3 +48,6 @@ services:
 #   docker compose up -d --build
 #   docker compose logs -f
 #   docker compose down
+networks:
+  cashoperations-network:
+    driver: "bridge"
