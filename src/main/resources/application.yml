@@ -25,6 +25,15 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+  config:
+    import:
+      - "application_dev.yml"
+      - "application_qa.yml"
+      - "application_prod.yml"
+  profiles:
+    active:
+      - "qa"
+
 fib:
   auth:
     api-key: f9Uie8nNf112hx8s
@@ -52,3 +61,15 @@ logging:
     name: /dev/stdout  # Force all logs to stdout
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+build:
+  version: "1.0"
+
+cashoperations:
+  message: "Welcome to Cashoperations related local APIs "
+  contactDetails:
+    name: "Metodi Velev - Developer"
+    email: "mvelev@example.com"
+  onCallSupport:
+    - (359) 123-1234
+    - (359) 123-1345

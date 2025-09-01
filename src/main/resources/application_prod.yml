@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "4.0"
+
+cashoperations:
+  message: "Welcome to Cashoperations related PROD APIs "
+  contactDetails:
+    name: "Alex Smith - Product Owner"
+    email: "asmith@example.com"
+  onCallSupport:
+    - (359) 423-3125
+    - (359) 318-2314

@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "3.0"
+
+cashoperations:
+  message: "Welcome to Cashoperations related QA APIs "
+  contactDetails:
+    name: "Taylor Brown - QA Lead"
+    email: "tbrown@example.com"
+  onCallSupport:
+    - (359) 395-2236
+    - (359) 321-2631

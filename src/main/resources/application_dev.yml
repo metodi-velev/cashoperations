@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+
+build:
+  version: "2.0"
+
+cashoperations:
+  message: "Welcome to Cashoperations related DEV APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@example.com"
+  onCallSupport:
+    - (359) 985-5563
+    - (359) 966-8899
