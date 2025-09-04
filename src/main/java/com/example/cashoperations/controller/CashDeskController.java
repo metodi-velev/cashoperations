@@ -12,8 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -28,14 +27,16 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @RestController
 @Transactional
-@RequiredArgsConstructor
 @Validated
 @SecurityRequirement(name = "fibAuth")
 @RequestMapping("/api/v1")
 public class CashDeskController {
 
-    @Autowired
     private final CashDeskService cashService;
+
+    public CashDeskController(@Qualifier("cashDeskServiceImpl") CashDeskService cashService) {
+        this.cashService = cashService;
+    }
 
     @Operation(
             summary = "Perform cash deposit or withdrawal",

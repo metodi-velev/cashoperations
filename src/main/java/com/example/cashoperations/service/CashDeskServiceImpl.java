@@ -12,22 +12,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
+@Service("cashDeskServiceImpl")
 public class CashDeskServiceImpl implements CashDeskService {
 
     @Autowired
@@ -108,8 +107,9 @@ public class CashDeskServiceImpl implements CashDeskService {
         }
 
         log.info("Deposit successful: {} {} deposit from cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
-        logTransaction("DEPOSIT", cashier.getName(), request);
-        logBalances();
+        //new Thread(() -> logTransaction("DEPOSIT", cashier.getName(), request)).start();
+        //new Thread(this::logBalances).start();
+        logging(cashier, request, "DEPOSIT");
     }
 
 
@@ -174,8 +174,26 @@ public class CashDeskServiceImpl implements CashDeskService {
         }
 
         log.info("Withdrawal successful: {} {} withdrawn from cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
-        logTransaction("Withdraw", cashier.getName(), request);
-        logBalances();
+        //new Thread(() -> logTransaction("WITHDRAW", cashier.getName(), request)).start();
+        //new Thread(this::logBalances).start();
+        logging(cashier, request, "WITHDRAWAL");
+    }
+
+    private void logging(Cashier cashier, CashOperationRequest request, String operation) {
+        CompletableFuture<Void> transactionFuture = CompletableFuture.runAsync(() -> logTransaction(operation, cashier.getName(), request));
+        CompletableFuture<Void> balanceFuture = CompletableFuture.runAsync(this::logBalances);
+        try {
+            transactionFuture.join(); // This will throw CompletionException with the cause
+            balanceFuture.join(); // This will throw CompletionException with the cause
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof LogTransactionException logTransactionException) {
+                throw logTransactionException;
+            } else if (e.getCause() instanceof LogBalancesException logBalancesException) {
+                throw logBalancesException;
+            } else {
+                throw new LogTransactionException("Failed to log transaction.", e.getCause().getMessage());
+            }
+        }
     }
 
     private void chechAmountValidity(CashOperationRequest request) {
@@ -200,22 +218,65 @@ public class CashDeskServiceImpl implements CashDeskService {
 
     private void logTransaction(String operation, String cashierName, CashOperationRequest request) {
         String timestamp = LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER);
-        String logEntry = String.format("%s - %s: %s %s%n", timestamp, operation, cashierName, request);
-        try {
-            Files.write(Paths.get(CashierRepository.TRANSACTION_FILE), logEntry.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            log.error("Failed to log transaction", e);
-        }
+        CompletableFuture<Void> transactionLogFuture =
+                CompletableFuture
+                        .supplyAsync(() ->
+                                String.format("%s - %s: %s %s%n", timestamp, operation, cashierName, request)
+                        )
+                        .thenCompose(content ->
+                                CompletableFuture.runAsync(() -> {
+                                    try {
+                                        Files.write(Paths.get(CashierRepository.TRANSACTION_FILE), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                                        //throw new IOException("Failed to log transaction."); // simulate transaction log error
+                                    } catch (Exception e) {
+                                        log.error("Failed to log transaction", e);
+                                        throw new LogTransactionException("Failed to log transaction.", e.getMessage());
+                                    }
+                                })
+                        );
+
+        // Wait for completion and propagate any exception
+        transactionLogFuture.join();
     }
 
-    private void logBalances() {
+    public void logBalances() {
         String timestamp = LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER);
-        StringBuilder sb = new StringBuilder();
-        CashierRepository.CASHIERS.forEach((name, cashier) -> sb.append(timestamp).append(" - ").append(name).append(": ").append(cashier.getBalances()).append("\n"));
-        try {
-            Files.write(Paths.get(CashierRepository.BALANCE_FILE), sb.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            log.error("Failed to log balances", e);
-        }
+        CompletableFuture<Void> balanceLogFuture =
+                CompletableFuture
+                        .supplyAsync(() -> CashierRepository.CASHIERS.entrySet()
+                                .parallelStream()
+                                .map(entry ->
+                                        timestamp + " - " +
+                                                entry.getKey() + ": " +
+                                                entry.getValue()
+                                                        .getBalances().entrySet().stream()
+                                                        .collect(Collectors.toMap
+                                                                (
+                                                                        Map.Entry::getKey,
+                                                                        value -> value.getValue().stream()
+                                                                                .filter(d -> d.getQuantity() != 0)
+                                                                                .toList(),
+                                                                        (a, b) -> a, // merge function - shouldn't be needed for EnumMap
+                                                                        () -> new EnumMap<>(Currency.class)
+                                                                )
+                                                        ) +
+                                                "\n"
+                                )
+                                .collect(Collectors.joining())
+                        )
+                        .thenCompose(content ->
+                                CompletableFuture.runAsync(() -> {
+                                    try {
+                                        Files.write(Paths.get(CashierRepository.BALANCE_FILE), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                                        //throw new IOException("Failed to log balances"); // simulate balances log error
+                                    } catch (Exception e) {
+                                        log.error("Failed to write balance log file", e);
+                                        throw new LogBalancesException("Failed to log balances.", e.getMessage());
+                                    }
+                                })
+                        );
+
+        // Wait for completion and propagate any exception
+        balanceLogFuture.join();
     }
 }

@@ -86,6 +86,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, webRequest, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(LogBalancesException.class)
+    public ResponseEntity<ErrorResponseDto> handleLogBalancesException(LogBalancesException exception, WebRequest webRequest) {
+        return buildErrorResponse(exception, webRequest, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(LogTransactionException.class)
+    public ResponseEntity<ErrorResponseDto> handleLogTransactionException(LogBalancesException exception, WebRequest webRequest) {
+        return buildErrorResponse(exception, webRequest, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private ResponseEntity<ErrorResponseDto> buildErrorResponse(Exception exception, WebRequest webRequest, HttpStatus status) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
