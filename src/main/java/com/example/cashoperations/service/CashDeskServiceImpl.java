@@ -10,6 +10,7 @@ import com.example.cashoperations.utils.LocalDateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -179,7 +180,8 @@ public class CashDeskServiceImpl implements CashDeskService {
         logging(cashier, request, "WITHDRAWAL");
     }
 
-    private void logging(Cashier cashier, CashOperationRequest request, String operation) {
+    @Async("ioExecutor")
+    void logging(Cashier cashier, CashOperationRequest request, String operation) {
         CompletableFuture<Void> transactionFuture = CompletableFuture.runAsync(() -> logTransaction(operation, cashier.getName(), request));
         CompletableFuture<Void> balanceFuture = CompletableFuture.runAsync(this::logBalances);
         try {
@@ -216,7 +218,8 @@ public class CashDeskServiceImpl implements CashDeskService {
         }
     }
 
-    private void logTransaction(String operation, String cashierName, CashOperationRequest request) {
+    @Async("ioExecutor")
+    void logTransaction(String operation, String cashierName, CashOperationRequest request) {
         String timestamp = LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER);
         CompletableFuture<Void> transactionLogFuture =
                 CompletableFuture
@@ -239,7 +242,8 @@ public class CashDeskServiceImpl implements CashDeskService {
         transactionLogFuture.join();
     }
 
-    public void logBalances() {
+    @Async("ioExecutor")
+    void logBalances() {
         String timestamp = LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER);
         CompletableFuture<Void> balanceLogFuture =
                 CompletableFuture
