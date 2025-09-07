@@ -3,6 +3,7 @@ package com.example.cashoperations.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.concurrent.Executor;
@@ -13,12 +14,8 @@ import java.util.concurrent.Executors;
 public class AsyncConfig {
 
     @Bean("ioExecutor")
-    public Executor ioBoundTaskExecutor() {
-        return Executors.newCachedThreadPool(runnable -> {
-            Thread thread = new Thread(runnable);
-            thread.setName("io-pool-" + thread.getId());
-            return thread;
-        });
+    public TaskExecutorAdapter taskExecutorAdapter() {
+        return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
     }
 
     @Bean("cpuExecutor")

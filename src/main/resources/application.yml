@@ -1,14 +1,17 @@
 spring:
   application:
     name: cashoperations
+  threads:
+    virtual:
+      enabled: true
   datasource:
     url: jdbc:h2:mem:testdb;TRACE_LEVEL_SYSTEM_OUT=3;TRACE_LEVEL_FILE=3
     driverClassName: org.h2.Driver
     username: sa
     password: ''
     hikari:
-      maximum-pool-size: 30
-      minimum-idle: 10
+      maximum-pool-size: 50
+      minimum-idle: 5
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
@@ -28,6 +31,10 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
+        # jdbc:
+          # batch_size: 50
+        order_inserts: true
+        order_updates: true
   output:
     ansi:
       enabled: ALWAYS
@@ -39,6 +46,10 @@ spring:
   profiles:
     active:
       - "qa"
+  # Reduce unnecessary autoconfiguration
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 
 fib:
   auth:

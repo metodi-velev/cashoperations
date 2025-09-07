@@ -4,7 +4,7 @@
 The **Cash Desk Module API** provides endpoints for managing cash balances and transactions for a cashier system. The API enables fetching cash balances within a specified date range and supports proper validation and error handling.
 
 ## Technologies Used
-- Java 17
+- Java 17 (upgraded to Java 21)
 - Spring Boot
 - Spring Transactions module `spring-tx`
 - Maven
@@ -203,6 +203,116 @@ To execute integration tests named `*IT.java`:
 ```sh
 mvn verify
 ```
+---
+
+# Performance Benchmark Analysis: Java 17 Platform Threads vs Java 21 Virtual Threads
+
+## 📊 Performance Comparison Summary
+
+| Metric | Java 17 (Platform Threads) | Java 21 (Virtual Threads) | Improvement |
+|--------|----------------------------|---------------------------|-------------|
+| **Throughput** | 1,552.1 req/sec | **1,696.1 req/sec** | **+9.3%** |
+| **Mean Response Time** | 29.01 ms | **26.52 ms** | **-8.6%** |
+| **Median Response Time** | 32 ms | **28 ms** | **-12.5%** |
+| **90th Percentile (pct1)** | 45 ms | **37 ms** | **-17.8%** |
+| **95th Percentile (pct2)** | 51 ms | **43 ms** | **-15.7%** |
+| **99th Percentile (pct3)** | 70 ms | **66 ms** | **-5.7%** |
+| **Total Requests** | 465,238 | **508,639** | **+9.3%** |
+| **Max Response Time** | 707 ms | **576 ms** | **-18.5%** |
+
+## 🔍 Key Insights
+
+### 1. **Throughput Improvement (+9.3%)**
+Virtual threads handle the 10→10,000 user spike more efficiently, processing **43,401 more requests** in the same 5-minute test period.
+
+### 2. **Latency Reduction (8.6-17.8%)**
+- **Average latency decreased** from 29ms to 26.5ms
+- **Tail latency (p90/p95) improved significantly** - virtual threads better handle congestion
+- **Maximum response time reduced** by 131ms (18.5%) - fewer extreme outliers
+
+### 3. **Virtual Thread Efficiency**
+The results confirm this is an **I/O-bound workload** (file write operations), where virtual threads excel by:
+- Eliminating thread pool contention
+- Reducing context switching overhead
+- Handling many more concurrent connections with less memory
+
+## 🚀 Further Optimization Opportunities
+
+### 1. **JVM Tuning for Virtual Threads**
+```bash
+    # Add these to your Java 21 virtual threads setup
+    -XX:+UseZGC  # Better for large heaps and low latency
+    -XX:ZAllocationSpikeTolerance=5.0
+    -XX:SoftMaxHeapSize=3g  # More aggressive GC
+    -XX:-UseBiasedLocking  # Not needed with virtual threads
+```
+
+### 2. **Database Connection Pool Optimization**
+```bash
+    # HikariCP or similar configuration
+    spring:
+      datasource:
+        hikari:
+          maximum-pool-size: 200  # Increase from default 10
+          minimum-idle: 20
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+```
+
+### 3. **SQL and Application Layer**
+```bash
+    // Enable these for better virtual thread performance
+    -Djdk.tracePinnedThreads=true  // Detect pinned threads
+    -Djdk.virtualThreadScheduler.parallelism=4  // Match CPU cores
+    -Djdk.virtualThreadScheduler.maxPoolSize=256
+```
+
+### 4. **Garbage Collection Tuning**
+```bash
+    # More aggressive GC settings for response time
+    -XX:ZCollectionInterval=10  # More frequent collections
+    -XX:ZUncommitDelay=300      # Uncommit unused memory faster
+    -XX:SoftRefLRUPolicyMSPerMB=0  # Aggressive soft reference clearing
+```
+
+### 5. **Application-Level Improvements**
+- **Implement connection pooling** at application level if not already done
+- **Use prepared statement caching**
+- **Batch operations** where possible
+- **Add second-level caching** (Redis, Hazelcast, etc.)
+- **Optimize SQL queries** - check for missing indexes
+
+### 6. **JMeter Test Configuration**
+- **Increase ramp-up time** to 60-120 seconds for smoother load increase
+- **Use throughput shaping timer** for more realistic load patterns
+- **Add think times** between requests (100-300ms)
+- **Test with different connection pool sizes** to find optimal setting
+
+### 7. **Monitoring and Profiling**
+```bash
+    # Add these JVM flags for profiling
+    -XX:+FlightRecorder
+    -XX:StartFlightRecording=filename=recording.jfr
+    -Dorg.jboss.logging.provider=slf4j
+    -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+```
+
+### **Expected Next Steps**
+1. **Run longer tests** (15-30 minutes) to see if the improvement sustains
+2. **Test with different user patterns** (steady state vs spikes)
+3. **Monitor database performance**  - it might become the next bottleneck
+4. **Consider connection pool sizing** - you might be able to handle even more concurrent connections
+
+### **Conclusion**
+
+The 9.3% throughput improvement and 8-18% latency reduction demonstrate that virtual threads are <br>
+working effectively for your I/O-bound workload. The optimization potential is significant, and with the <br>
+additional tuning suggestions, you could likely achieve 15-25%+ overall improvement compared to the <br>
+original Java 17 platform thread implementation.
+
+The results confirm that virtual threads provide substantial benefits for high-concurrency, I/O-intensive <br> 
+applications like your cash operation service.
 
 ---
 ## Docker

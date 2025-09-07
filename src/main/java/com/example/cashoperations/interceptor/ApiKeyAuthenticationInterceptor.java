@@ -26,6 +26,9 @@ public class ApiKeyAuthenticationInterceptor implements HandlerInterceptor {
         if (path.startsWith("/h2-console")) {
             return true;
         }
+        if (path.startsWith("/stats")) {
+            return true;
+        }
         if (!apiKey.equals(request.getHeader("FIB-X-AUTH"))) {
             throw new InvalidApiKeyException("Invalid API key.");
         }

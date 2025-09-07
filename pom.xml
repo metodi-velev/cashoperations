@@ -27,7 +27,10 @@
         <url/>
     </scm>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
     <dependencies>
         <dependency>
@@ -87,6 +90,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        -Xms4g -Xmx4g
+                        -XX:InitialHeapSize=4g
+                        -XX:MaxHeapSize=4g
+                        -XX:MaxGCPauseMillis=100
+                        -XX:G1HeapRegionSize=8m
+                        -XX:+UnlockExperimentalVMOptions
+                        -XX:G1NewSizePercent=20
+                        -XX:G1MaxNewSizePercent=40
+                        -XX:ConcGCThreads=4
+                        -XX:ParallelGCThreads=8
+                    </jvmArguments>
+                </configuration>
             </plugin>
             <!-- Surefire Plugin (for unit tests) -->
             <plugin>
