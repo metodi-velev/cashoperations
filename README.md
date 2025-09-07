@@ -205,9 +205,9 @@ mvn verify
 ```
 ---
 
-# Performance Benchmark Analysis: Java 17 Platform Threads vs Java 21 Virtual Threads
+## Performance Benchmark Analysis: Java 17 Platform Threads vs Java 21 Virtual Threads
 
-## 📊 Performance Comparison Summary
+### 📊 Performance Comparison Summary
 
 | Metric | Java 17 (Platform Threads) | Java 21 (Virtual Threads) | Improvement |
 |--------|----------------------------|---------------------------|-------------|
@@ -220,25 +220,25 @@ mvn verify
 | **Total Requests** | 465,238 | **508,639** | **+9.3%** |
 | **Max Response Time** | 707 ms | **576 ms** | **-18.5%** |
 
-## 🔍 Key Insights
+### 🔍 Key Insights
 
-### 1. **Throughput Improvement (+9.3%)**
+#### 1. **Throughput Improvement (+9.3%)**
 Virtual threads handle the 10→10,000 user spike more efficiently, processing **43,401 more requests** in the same 5-minute test period.
 
-### 2. **Latency Reduction (8.6-17.8%)**
+#### 2. **Latency Reduction (8.6-17.8%)**
 - **Average latency decreased** from 29ms to 26.5ms
 - **Tail latency (p90/p95) improved significantly** - virtual threads better handle congestion
 - **Maximum response time reduced** by 131ms (18.5%) - fewer extreme outliers
 
-### 3. **Virtual Thread Efficiency**
+#### 3. **Virtual Thread Efficiency**
 The results confirm this is an **I/O-bound workload** (file write operations), where virtual threads excel by:
 - Eliminating thread pool contention
 - Reducing context switching overhead
 - Handling many more concurrent connections with less memory
 
-## 🚀 Further Optimization Opportunities
+### 🚀 Further Optimization Opportunities
 
-### 1. **JVM Tuning for Virtual Threads**
+#### 1. **JVM Tuning for Virtual Threads**
 ```bash
     # Add these to your Java 21 virtual threads setup
     -XX:+UseZGC  # Better for large heaps and low latency
@@ -247,7 +247,7 @@ The results confirm this is an **I/O-bound workload** (file write operations), w
     -XX:-UseBiasedLocking  # Not needed with virtual threads
 ```
 
-### 2. **Database Connection Pool Optimization**
+#### 2. **Database Connection Pool Optimization**
 ```bash
     # HikariCP or similar configuration
     spring:
@@ -260,7 +260,7 @@ The results confirm this is an **I/O-bound workload** (file write operations), w
           max-lifetime: 1800000
 ```
 
-### 3. **SQL and Application Layer**
+#### 3. **SQL and Application Layer**
 ```bash
     // Enable these for better virtual thread performance
     -Djdk.tracePinnedThreads=true  // Detect pinned threads
@@ -268,7 +268,7 @@ The results confirm this is an **I/O-bound workload** (file write operations), w
     -Djdk.virtualThreadScheduler.maxPoolSize=256
 ```
 
-### 4. **Garbage Collection Tuning**
+#### 4. **Garbage Collection Tuning**
 ```bash
     # More aggressive GC settings for response time
     -XX:ZCollectionInterval=10  # More frequent collections
@@ -276,20 +276,20 @@ The results confirm this is an **I/O-bound workload** (file write operations), w
     -XX:SoftRefLRUPolicyMSPerMB=0  # Aggressive soft reference clearing
 ```
 
-### 5. **Application-Level Improvements**
+#### 5. **Application-Level Improvements**
 - **Implement connection pooling** at application level if not already done
 - **Use prepared statement caching**
 - **Batch operations** where possible
 - **Add second-level caching** (Redis, Hazelcast, etc.)
 - **Optimize SQL queries** - check for missing indexes
 
-### 6. **JMeter Test Configuration**
+#### 6. **JMeter Test Configuration**
 - **Increase ramp-up time** to 60-120 seconds for smoother load increase
 - **Use throughput shaping timer** for more realistic load patterns
 - **Add think times** between requests (100-300ms)
 - **Test with different connection pool sizes** to find optimal setting
 
-### 7. **Monitoring and Profiling**
+#### 7. **Monitoring and Profiling**
 ```bash
     # Add these JVM flags for profiling
     -XX:+FlightRecorder
@@ -298,13 +298,13 @@ The results confirm this is an **I/O-bound workload** (file write operations), w
     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
 ```
 
-### **Expected Next Steps**
+#### **Expected Next Steps**
 1. **Run longer tests** (15-30 minutes) to see if the improvement sustains
 2. **Test with different user patterns** (steady state vs spikes)
 3. **Monitor database performance**  - it might become the next bottleneck
 4. **Consider connection pool sizing** - you might be able to handle even more concurrent connections
 
-### **Conclusion**
+#### **Conclusion**
 
 The 9.3% throughput improvement and 8-18% latency reduction demonstrate that virtual threads are <br>
 working effectively for your I/O-bound workload. The optimization potential is significant, and with the <br>
