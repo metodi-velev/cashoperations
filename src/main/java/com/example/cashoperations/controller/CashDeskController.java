@@ -34,7 +34,7 @@ public class CashDeskController {
 
     private final CashDeskService cashService;
 
-    public CashDeskController(@Qualifier("cashDeskServiceImpl") CashDeskService cashService) {
+    public CashDeskController(@Qualifier("cashDeskServiceImplV3") CashDeskService cashService) {
         this.cashService = cashService;
     }
 

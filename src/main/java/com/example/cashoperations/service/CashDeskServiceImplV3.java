@@ -1,0 +1,212 @@
+package com.example.cashoperations.service;
+
+import com.example.cashoperations.dto.CashOperationRequest;
+import com.example.cashoperations.exception.*;
+import com.example.cashoperations.model.Cashier;
+import com.example.cashoperations.model.Currency;
+import com.example.cashoperations.model.Denomination;
+import com.example.cashoperations.repository.CashierRepository;
+import com.example.cashoperations.utils.BatchFileWriter;
+import com.example.cashoperations.utils.LocalDateTimeFormatter;
+import com.example.cashoperations.utils.TransactionLogger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
+
+@Slf4j
+@RequiredArgsConstructor
+@Service("cashDeskServiceImplV3")
+public class CashDeskServiceImplV3 implements CashDeskService {
+
+    @Autowired
+    private final CashierRepository cashierRepository;
+
+    @Autowired
+    private final TransactionLogger transactionLogger;
+
+    // Fine-grained locks per cashier+currency to reduce contention versus synchronizing the whole service instance
+    private final ConcurrentHashMap<String, ReentrantLock> balanceLocks = new ConcurrentHashMap<>();
+    @Autowired
+    private BatchFileWriter batchFileWriter;
+
+    private ReentrantLock getBalanceLock(String cashierName, Currency currency) {
+        String key = cashierName + "|" + currency.name();
+        return balanceLocks.computeIfAbsent(key, k -> new ReentrantLock());
+    }
+
+    @Override
+    public void performOperation(CashOperationRequest request) {
+        Cashier cashier = cashierRepository.getCashier(request.getCashierName());
+        if (cashier == null) {
+            throw new ResourceNotFoundException("Cashier", "name", request.getCashierName());
+        }
+
+        chechAmountValidity(request);
+
+        if ("DEPOSIT".equalsIgnoreCase(request.getOperationType())) {
+            deposit(cashier, request);
+        } else if ("WITHDRAWAL".equalsIgnoreCase(request.getOperationType())) {
+            withdraw(cashier, request);
+        }
+
+        cashierRepository.updateCashier(cashier);
+    }
+
+    private void deposit(Cashier cashier, CashOperationRequest request) {
+        if (request == null) {
+            log.error("Invalid deposit request. Cashier or denominations cannot be null/empty.");
+            throw new InvalidDepositException("Invalid deposit request. Deposit request must be defined.");
+        }
+        if (cashier == null) {
+            log.error("Invalid deposit request. Cashier cannot be null.");
+            throw new InvalidDepositException("Invalid deposit request. Cashier cannot be null.");
+        }
+        if (request.getDenominations() == null || request.getDenominations().isEmpty()) {
+            log.error("Invalid deposit request. Cashier or denominations cannot be null/empty.");
+            throw new InvalidDepositException("Invalid deposit request. Deposit request must contain at least one valid denomination.");
+        }
+
+        Currency currency = request.getCurrency();
+        List<Denomination> depositDenominations = request.getDenominations();
+        Map<Currency, List<Denomination>> cashierBalances = cashier.getBalances();
+
+        // Use fine-grained lock per cashier+currency to avoid global contention
+        ReentrantLock lock = getBalanceLock(cashier.getName(), currency);
+        lock.lock();
+        try {
+            // Retrieve or initialize the list of denominations for the given currency
+            List<Denomination> cashierDenominations =
+                    cashierBalances.computeIfAbsent(currency, k -> new ArrayList<>());
+
+            // Update cashier balance for the specified currency
+            for (Denomination deposit : depositDenominations) {
+                Optional<Denomination> existingDenomination = cashierDenominations.stream()
+                        .filter(d -> d.getValue() == deposit.getValue())
+                        .findFirst();
+                if (existingDenomination.isPresent()) {
+                    // Update the quantity of the existing denomination
+                    existingDenomination.get().setQuantity(
+                            existingDenomination.get().getQuantity() + deposit.getQuantity()
+                    );
+                    existingDenomination.get().setTimestamp(
+                            LocalDateTime.parse(LocalDateTime.now().format(LocalDateTimeFormatter.TIMESTAMP_FORMATTER), LocalDateTimeFormatter.TIMESTAMP_FORMATTER)
+                    );
+                } else {
+                    // Add new denomination entry
+                    cashierDenominations.add(new Denomination(deposit.getQuantity(), deposit.getValue()));
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        log.info("Deposit successful: {} {} deposit from cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
+        //new Thread(() -> logTransaction("DEPOSIT", cashier.getName(), request)).start();
+        //new Thread(this::logBalances).start();
+        logging(cashier, request, "DEPOSIT");
+    }
+
+
+    private void withdraw(Cashier cashier, CashOperationRequest request) {
+        log.info("Processing withdrawal of {} {} for cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
+
+        Currency currency = request.getCurrency();
+        ReentrantLock lock = getBalanceLock(cashier.getName(), currency);
+        lock.lock();
+        try {
+            // Get the cashier's balance for the requested currency
+            Map<Currency, List<Denomination>> balances = cashier.getBalances();
+            List<Denomination> cashierDenominations = balances.get(currency);
+
+            if (cashierDenominations == null) {
+                log.error("Currency {} not supported for cashier {}", currency, cashier.getName());
+                throw new CurrencyNotSupportedException(currency.toString());
+            }
+
+            // Create a copy of the cashier's denominations to avoid modifying the original list directly
+            List<Denomination> updatedDenominations = new ArrayList<>();
+
+            for (Denomination cashierDenomination : cashierDenominations) {
+                updatedDenominations.add(new Denomination(cashierDenomination.getQuantity(), cashierDenomination.getValue()));
+            }
+
+            // Process the requested denominations
+            for (Denomination requestedDenomination : request.getDenominations()) {
+                boolean found = false;
+                for (Denomination cashierDenomination : updatedDenominations) {
+                    if (cashierDenomination.getValue() == requestedDenomination.getValue()) {
+                        // Check if the cashier has enough of this denomination
+                        if (cashierDenomination.getQuantity() < requestedDenomination.getQuantity()) {
+                            log.error("Insufficient denominations: requested {}x{} but only {}x{} available",
+                                    requestedDenomination.getQuantity(), requestedDenomination.getValue(), cashierDenomination.getQuantity(),
+                                    cashierDenomination.getValue());
+                            throw new InsufficientDenominationException(
+                                    requestedDenomination.getQuantity(),
+                                    requestedDenomination.getValue(),
+                                    cashierDenomination.getQuantity(),
+                                    cashierDenomination.getValue()
+                            );
+                        }
+                        // Subtract the requested quantity
+                        cashierDenomination.setQuantity(cashierDenomination.getQuantity() - requestedDenomination.getQuantity());
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    log.error("Denomination {} not available for cashier {}", requestedDenomination.getValue(), cashier.getName());
+                    throw new DenominationNotFoundException(requestedDenomination.getValue());
+                }
+            }
+
+            // Update the cashier's balance
+            balances.put(currency, updatedDenominations);
+            cashier.setBalances(balances);
+        } finally {
+            lock.unlock();
+        }
+
+        log.info("Withdrawal successful: {} {} withdrawn from cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
+        //new Thread(() -> logTransaction("WITHDRAW", cashier.getName(), request)).start();
+        //new Thread(this::logBalances).start();
+        logging(cashier, request, "WITHDRAWAL");
+    }
+
+    @Async("ioExecutor")
+    public void logging(Cashier cashier, CashOperationRequest request, String operation) {
+            transactionLogger.logTransaction(operation, cashier.getName(), request);
+            transactionLogger.logBalances();
+    }
+
+    private void chechAmountValidity(CashOperationRequest request) {
+        BigDecimal amount = request.getAmount();
+
+        int denominationsAmountSum = request.getDenominations().stream()
+                .map(d -> d.getValue() * d.getQuantity())
+                .mapToInt(d -> d)
+                .sum();
+
+        BigDecimal bigDecimalDenominationsAmountSum = new BigDecimal(denominationsAmountSum);
+
+        if (amount.compareTo(bigDecimalDenominationsAmountSum) != 0) {
+            log.error("Invalid deposit request. Amount {} does not match overall denominations sum {}.", amount, bigDecimalDenominationsAmountSum);
+            throw new InvalidAmountException("Invalid deposit request. Amount "
+                    + amount
+                    + " does not match overall denominations sum "
+                    + bigDecimalDenominationsAmountSum + "."
+            );
+        }
+    }
+}

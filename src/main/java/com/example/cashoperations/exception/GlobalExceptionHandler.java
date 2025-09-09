@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -92,8 +93,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(LogTransactionException.class)
-    public ResponseEntity<ErrorResponseDto> handleLogTransactionException(LogBalancesException exception, WebRequest webRequest) {
+    public ResponseEntity<ErrorResponseDto> handleLogTransactionException(LogTransactionException exception, WebRequest webRequest) {
         return buildErrorResponse(exception, webRequest, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CompletionException.class)
+    public ResponseEntity<ErrorResponseDto> handleCompletionException(CompletionException ex, WebRequest webRequest) {
+        Throwable cause = ex.getCause();
+
+        if (cause instanceof LogTransactionException lte) {
+            return handleLogTransactionException(lte, webRequest);
+        } else if (cause instanceof LogBalancesException lbe) {
+            return handleLogBalancesException(lbe, webRequest);
+        }
+
+        return buildErrorResponse(ex, webRequest, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<ErrorResponseDto> buildErrorResponse(Exception exception, WebRequest webRequest, HttpStatus status) {
