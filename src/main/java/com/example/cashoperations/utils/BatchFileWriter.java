@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -73,7 +72,7 @@ public class BatchFileWriter {
                 String batchContent = String.join("", batch);
                 Files.write(file, batchContent.getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.WRITE);
-                throw new IOException(String.join("Failed to write {} batch", type)); // simulate transaction log error
+                //throw new IOException(String.join("Failed to write {} batch", type)); // simulate transaction log error
             } catch (Exception e) {
                 log.error("Failed to write {} batch", type, e);
                 if (type.equals("transaction")) {
