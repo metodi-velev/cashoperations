@@ -92,7 +92,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(LogTransactionException.class)
-    public ResponseEntity<ErrorResponseDto> handleLogTransactionException(LogBalancesException exception, WebRequest webRequest) {
+    public ResponseEntity<ErrorResponseDto> handleLogTransactionException(LogTransactionException exception, WebRequest webRequest) {
         return buildErrorResponse(exception, webRequest, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
