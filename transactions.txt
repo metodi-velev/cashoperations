@@ -1,1 +1,0 @@
-2025-02-28T12:18:35 - DEPOSIT: LINDA CashOperationRequest{cashierName='LINDA', currency=EUR, operationType='DEPOSIT', amount=200, denominations=5x20, 2x50}
