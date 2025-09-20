@@ -90,3 +90,7 @@ management:
 
 # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-management
 # POST request to http://localhost:8080/actuator/busrefresh
+# Use http://localhost:8071/monitor endpoint for automatic calls to http://localhost:8080/actuator/busrefresh
+# Go to https://console.hookdeck.com/ and follow the instruction steps
+# hookdeck listen 8071 Source --cli-path /monitor
+# Webhook-URL: https://hkdk.events/vwp4f9tw0l1yne
