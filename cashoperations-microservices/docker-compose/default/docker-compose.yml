@@ -1,16 +1,13 @@
 services:
   cashoperations:
-    image: cashoperations:latest
+    image: mvel1603/cashoperations:spring-cloud-bus-monitor-java-21
     build: .
     container_name: cashoperations
     ports:
       - "8080:8080"
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - cashoperations-network
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
     environment:
       # Override Spring property fib.auth.api-key if needed (relaxed binding from ENV var)
       # Remove or change the value as required
@@ -30,6 +27,7 @@ services:
       - LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL=TRACE
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_JPA=DEBUG
       - LOGGING_LEVEL_ROOT=INFO
+      - SPRING_APPLICATION_NAME=cashoperations
       # Key setting: show all logs in console
     tty: true
     stdin_open: true
@@ -43,6 +41,41 @@ services:
     #   interval: 30s
     #   timeout: 5s
     #   retries: 5
+
+  configserver:
+    image: mvel1603/configserver:spring-cloud-bus-monitor-java-21
+    build: .
+    container_name: configserver
+    ports:
+      - "8071:8071"
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  rabbit:
+    image: rabbitmq:3.12-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
 # Usage:
 #   docker compose up -d --build

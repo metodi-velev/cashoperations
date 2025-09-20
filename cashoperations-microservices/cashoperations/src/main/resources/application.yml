@@ -87,10 +87,21 @@ management:
     web:
       exposure:
         include: "*"
-
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
 # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-management
 # POST request to http://localhost:8080/actuator/busrefresh
 # Use http://localhost:8071/monitor endpoint for automatic calls to http://localhost:8080/actuator/busrefresh
 # Go to https://console.hookdeck.com/ and follow the instruction steps
 # hookdeck listen 8071 Source --cli-path /monitor
 # Webhook-URL: https://hkdk.events/vwp4f9tw0l1yne
+# Create a webhook in github with the webhook-url as payload-url. This will automatically
+# send a POST request to Config Server /monitor path after each new push to the config repo

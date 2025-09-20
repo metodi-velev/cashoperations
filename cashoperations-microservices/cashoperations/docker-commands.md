@@ -33,6 +33,7 @@ docker run --name cashoperations --rm -p 8080:8080 cashoperations:latest
 docker stop cashoperations
 
 # --- Using Docker Compose instead (recommended) ---
+# Go to a profile specific folder (default, dev, prod or qa) under the docker-compose directory 
 # Build and start in detached mode:
 # docker compose up -d --build
 # Check logs:

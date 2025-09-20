@@ -1,7 +1,7 @@
 # ------------------------------
 # Stage 1: Build the application
 # ------------------------------
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /workspace
 
@@ -16,7 +16,7 @@ RUN mvn -B -q -DskipTests package
 # ------------------------------
 # Stage 2: Run the application
 # ------------------------------
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 
 # Create non-root user
 RUN useradd -ms /bin/bash appuser

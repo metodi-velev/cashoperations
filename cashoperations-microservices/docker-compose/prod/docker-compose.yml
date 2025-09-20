@@ -1,0 +1,86 @@
+services:
+  cashoperations:
+    image: mvel1603/cashoperations:spring-cloud-bus-monitor-java-21
+    build: .
+    container_name: cashoperations
+    ports:
+      - "8080:8080"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      # Override Spring property fib.auth.api-key if needed (relaxed binding from ENV var)
+      # Remove or change the value as required
+      - FIB_AUTH_API_KEY=f9Uie8nNf112hx8s
+      - H2_OPTIONS=-webAllowOthers -tcpAllowOthers
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_SETTINGS_URL=jdbc:h2:mem:testdb  # This is the key variable
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_USE_SQL_COMMENTS=true
+      - LOGGING_LEVEL_ORG_HIBERNATE_SQL=DEBUG
+      - LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL=TRACE
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_JPA=DEBUG
+      - LOGGING_LEVEL_ROOT=INFO
+      - SPRING_APPLICATION_NAME=cashoperations
+      # Key setting: show all logs in console
+    tty: true
+    stdin_open: true
+    # Force color output
+    command: [ "--spring.output.ansi.enabled=ALWAYS" ]
+    # Uncomment to always restart unless manually stopped
+    # restart: unless-stopped
+    # Healthcheck (optional): consider adding an actuator health endpoint for robust checks
+    # healthcheck:
+    #   test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | findstr UP"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 5
+
+  configserver:
+    image: mvel1603/configserver:spring-cloud-bus-monitor-java-21
+    build: .
+    container_name: configserver
+    ports:
+      - "8071:8071"
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  rabbit:
+    image: rabbitmq:3.12-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+# Usage:
+#   docker compose up -d --build
+#   docker compose logs -f
+#   docker compose down
+networks:
+  cashoperations-network:
+    driver: "bridge"

@@ -158,6 +158,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <to>
+                        <image>mvel1603/${project.artifactId}:spring-cloud-bus-monitor-java-21</image>
+                        <!-- Build the docker image with "mvn compile jib:dockerBuild" command -->
+                    </to>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
