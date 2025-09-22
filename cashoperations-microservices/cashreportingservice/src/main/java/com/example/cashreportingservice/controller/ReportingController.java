@@ -21,15 +21,15 @@ import java.util.Map;
  * <ul>
  *   <li>
  *     Daily Summary:
- *     <code>GET http://localhost:8081/cashreportingservice/api/v1/reports/daily-summary&amp;date=2025-09-22&cashier=Linda</code>
+ *     <code>GET http://localhost:8081/cashreportingservice/api/v1/reports/daily-summary?date=2025-09-22&cashier=Linda</code>
  *   </li>
  *   <li>
  *     Currency Summary:
- *     <code>GET http://localhost:8081/cashreportingservice/api/v1/reports/currency-summary?date=2025-03-28</code>
+ *     <code>GET http://localhost:8081/cashreportingservice/api/v1/reports/currency-summary?date=2025-09-22</code>
  *   </li>
  *   <li>
  *     Cashier Activity:
- *     <code>GET http://localhost:8081/cashreportingservice/api/v1/reports/cashier-activity?startDate=2025-03-28T00:00:00&amp;endDate=2025-03-28T23:59:59&amp;cashier=Linda</code>
+ *     <code>GET http://localhost:8081/cashreportingservice/api/v1/reports/cashier-activity?startDate=2025-09-21T00:00:00&endDate=2025-09-23T23:59:59&cashier=Linda</code>
  *   </li>
  * </ul>
  */
