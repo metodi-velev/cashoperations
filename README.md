@@ -5,7 +5,7 @@
 
 ### 1. Open a command prompt in the `docker-compose\default` directory 
 ### 2. Run `docker-compose up -d` in the terminal 
-### 3. New API Endpoints in Cash Reporting Service (cashreportingservice)
+### 3. New API Endpoints in Cash Reporting Microservice (cashreportingservice)
 ### 3.1. Daily Summary endpoint
 **Endpoint:** `GET /cashreportingservice/api/v1/reports/daily-summary` <br>
 **Example request with date and cashier filters applied:**
