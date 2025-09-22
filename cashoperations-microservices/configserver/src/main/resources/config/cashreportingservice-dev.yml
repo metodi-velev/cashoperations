@@ -1,0 +1,11 @@
+build:
+  version: "2.0"
+
+cashreportingservice:
+  message: "Welcome to Cash Reporting Service related DEV APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@example.com"
+  onCallSupport:
+    - (359) 985-5563
+    - (359) 966-8899

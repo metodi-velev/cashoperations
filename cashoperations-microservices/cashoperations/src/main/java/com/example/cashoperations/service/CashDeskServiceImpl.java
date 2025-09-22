@@ -7,6 +7,7 @@ import com.example.cashoperations.model.Currency;
 import com.example.cashoperations.model.Denomination;
 import com.example.cashoperations.repository.CashierRepository;
 import com.example.cashoperations.utils.LocalDateTimeFormatter;
+import com.example.cashoperations.utils.StatisticsInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class CashDeskServiceImpl implements CashDeskService {
 
     @Autowired
     private final CashierRepository cashierRepository;
+
+    @Autowired
+    private final StatisticsInfo statisticsInfo;
 
     // Fine-grained locks per cashier+currency to reduce contention versus synchronizing the whole service instance
     private final ConcurrentHashMap<String, ReentrantLock> balanceLocks = new ConcurrentHashMap<>();
@@ -107,6 +111,7 @@ public class CashDeskServiceImpl implements CashDeskService {
             lock.unlock();
         }
 
+        StatisticsInfo.operations.merge("DEPOSIT" + "|" + cashier.getName() + "|" + currency.name(), 1, Integer::sum);
         log.info("Deposit successful: {} {} deposit from cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
         //new Thread(() -> logTransaction("DEPOSIT", cashier.getName(), request)).start();
         //new Thread(this::logBalances).start();
@@ -174,6 +179,7 @@ public class CashDeskServiceImpl implements CashDeskService {
             lock.unlock();
         }
 
+        StatisticsInfo.operations.merge("WITHDRAWAL" + "|" + cashier.getName() + "|" + currency.name(), 1, Integer::sum);
         log.info("Withdrawal successful: {} {} withdrawn from cashier {}", request.getAmount(), request.getCurrency(), cashier.getName());
         //new Thread(() -> logTransaction("WITHDRAW", cashier.getName(), request)).start();
         //new Thread(this::logBalances).start();

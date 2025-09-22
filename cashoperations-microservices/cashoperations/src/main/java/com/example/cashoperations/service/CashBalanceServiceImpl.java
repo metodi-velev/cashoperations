@@ -6,7 +6,9 @@ import com.example.cashoperations.model.Cashier;
 import com.example.cashoperations.model.Currency;
 import com.example.cashoperations.model.Denomination;
 import com.example.cashoperations.repository.CashierRepository;
+import com.example.cashoperations.utils.StatisticsInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class CashBalanceServiceImpl implements CashBalanceService {
                 .map(entry -> {
                     log.debug("Processing balances for cashier: {}", entry.getKey());
                     return new CashBalanceResponse(
+                            StatisticsInfo.operations,
                             LocalDateTime.now(),
                             entry.getKey(),
                             filterBalancesByDate(entry.getValue().getBalances(), dateFrom, dateTo)

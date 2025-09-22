@@ -22,3 +22,12 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+  cashreportingservice-config:
+    extends:
+      service: microservice-configserver-config
+    depends_on:
+      cashoperations:
+        condition: service_healthy
+    environment:
+      CASHOPERATIONS_SERVICE_BASE_URL: cashoperations:http://cashoperations:8080/

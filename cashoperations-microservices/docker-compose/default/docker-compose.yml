@@ -5,6 +5,12 @@ services:
     container_name: cashoperations
     ports:
       - "8080:8080"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
@@ -41,6 +47,42 @@ services:
     #   interval: 30s
     #   timeout: 5s
     #   retries: 5
+
+  cashreportingservice:
+    image: mvel1603/cashreportingservice:spring-cloud-bus-monitor-java-21
+    build: .
+    container_name: cashreportingservice
+    ports:
+      - "8081:8081"
+    extends:
+      file: common-config.yml
+      service: cashreportingservice-config
+    environment:
+      # Override Spring property fib.auth.api-key if needed (relaxed binding from ENV var)
+      # Remove or change the value as required
+      - FIB_AUTH_API_KEY=f9Uie8nNf112hx8s
+      - H2_OPTIONS=-webAllowOthers -tcpAllowOthers
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb2;DB_CLOSE_ON_EXIT=FALSE
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_SETTINGS_URL=jdbc:h2:mem:testdb2  # This is the key variable
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_USE_SQL_COMMENTS=true
+      - LOGGING_LEVEL_ORG_HIBERNATE_SQL=DEBUG
+      - LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL=TRACE
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_JPA=DEBUG
+      - LOGGING_LEVEL_ROOT=INFO
+      - SPRING_APPLICATION_NAME=cashreportingservice
+      - CASHOPERATIONS_SERVICE_BASE_URL=http://cashoperations:8080/
+      # Key setting: show all logs in console
+    tty: true
+    stdin_open: true
+    # Force color output
+    command: [ "--spring.output.ansi.enabled=ALWAYS" ]
 
   configserver:
     image: mvel1603/configserver:spring-cloud-bus-monitor-java-21
