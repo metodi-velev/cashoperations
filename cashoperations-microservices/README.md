@@ -14,7 +14,7 @@
 **Response:**
 ```json
 {
-  "cashier": "Martina",
+  "cashier": "Linda",
   "date": "2025-09-22",
   "totalDeposits": 6,
   "totalWithdrawals": 3,
