@@ -48,8 +48,7 @@ HTTP Response Status 201 Created
 
 ---
 
-### 2. Get and save to disk all files belonging to `fileGroup`. If more than
-    one file is found, zip them and then save the zipped file.
+### 2. Get and save to disk all files belonging to `fileGroup`. If more than one file is found, zip them and then save the zipped file.
 **Endpoint:** `GET /api/v1/documents/downloader` <br>
 **Example request:**
 <br>`GET http://localhost:8082/cashdocumentsservice/api/v1/documents/downloader?fileGroup=certificates`
