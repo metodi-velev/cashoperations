@@ -1,0 +1,11 @@
+build:
+  version: "2.0"
+
+cashdocumentsservice:
+  message: "Welcome to Cash Documents Service related DEV APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@example.com"
+  onCallSupport:
+    - (359) 985-5563
+    - (359) 966-8899

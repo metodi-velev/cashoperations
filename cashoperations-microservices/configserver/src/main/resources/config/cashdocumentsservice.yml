@@ -1,0 +1,11 @@
+build:
+  version: "1.0"
+
+cashdocumentsservice:
+  message: "Welcome to Cash Documents Service related local APIs "
+  contactDetails:
+    name: "Metodi Velev - Developer"
+    email: "mvelev@example.com"
+  onCallSupport:
+    - (359) 123-1234
+    - (359) 123-1345

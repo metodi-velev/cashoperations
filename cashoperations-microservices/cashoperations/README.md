@@ -1,5 +1,13 @@
 # Cash Desk Module API
 
+---
+
+## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices:
+### 1. Open a command prompt in the `docker-compose\default` directory
+### 2. Run `docker-compose up -d` in the terminal
+
+---
+
 ## Project Description
 The **Cash Desk Module API** provides endpoints for managing cash balances and transactions for a cashier system. The API enables fetching cash balances within a specified date range and supports proper validation and error handling. The most up-to-date branch at the moment is the **read-config-files-from-cashoperations-config-repo** branch. This branch demonstrates a microservice configuration setup using Spring Cloud Config Server. It features automatic, distributed configuration updates via Spring Cloud Bus and RabbitMQ with comprehensive monitoring through Spring Cloud's observability tools.
 

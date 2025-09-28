@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+
+cashdocumentsservice:
+  message: "Welcome to Cash Documents Service related QA APIs "
+  contactDetails:
+    name: "Taylor Brown - QA Lead"
+    email: "tbrown@example.com"
+  onCallSupport:
+    - (359) 395-2236
+    - (359) 321-2631

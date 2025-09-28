@@ -31,3 +31,12 @@ services:
         condition: service_healthy
     environment:
       CASHOPERATIONS_SERVICE_BASE_URL: cashoperations:http://cashoperations:8080/
+
+  cashdocumentsservice-config:
+    extends:
+      service: cashreportingservice-config
+    depends_on:
+      cashreportingservice:
+        condition: service_healthy
+    environment:
+      CASHREPORTINGSERVICE_SERVICE_BASE_URL: cashreportingservice:http://cashreportingservice:8081/cashreportingservice/

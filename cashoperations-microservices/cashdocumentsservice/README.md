@@ -8,6 +8,20 @@
 
 ---
 
+## Project Description
+The **Cash Desk Module API** provides endpoints for managing cash balances and transactions for a cashier system. The API enables fetching cash balances within a specified date range and supports proper validation and error handling. The most up-to-date branch at the moment is the **read-config-files-from-cashoperations-config-repo** branch. This branch demonstrates a microservice configuration setup using Spring Cloud Config Server. It features automatic, distributed configuration updates via Spring Cloud Bus and RabbitMQ with comprehensive monitoring through Spring Cloud's observability tools.
+
+## Technologies Used
+- Java 17 (upgraded to Java 21)
+- Spring Boot
+- Spring Transactions module `spring-tx`
+- Maven
+- Hibernate Validator (Jakarta Validation API)
+- Lombok
+- SLF4J Logging
+
+---
+
 ## NEW API Endpoints in Cashdocumentsservice Microservice
 
 ### 1. Upload custom files (and generate daily cashoperations summary report)
@@ -17,7 +31,7 @@
 
 **Description:** Upload custom files selected by the user. If the user selects `getAndSaveDailySummary`
 with `yes` value, then an asynchronous HTTP Request is sent with the help of WebClient to get
-the cashoperations daily summary report from the `cashreportingservice` microservice.
+the cashoperations daily summary report from the `cashreportingservice` microservice. 
 The daily summary report is then saved to the in memory H2 DB and to the file system.
 
 **Request Parameters:**
@@ -92,106 +106,6 @@ HTTP Response Status 200 OK
   }
 ]
 ```
-
----
-
----
-## NEW: Steps to run the microservicess and access the new endpints in cashreportingservice in default profile
-
-### 1. Open a command prompt in the `docker-compose\default` directory 
-### 2. Run `docker-compose up -d` in the terminal 
-### 3. New API Endpoints in Cash Reporting Microservice (cashreportingservice)
-### 3.1. Daily Summary endpoint
-**Endpoint:** `GET /cashreportingservice/api/v1/reports/daily-summary` <br>
-**Example request with date and cashier filters applied:**
-<br>`GET http://localhost:8081/cashreportingservice/api/v1/reports/daily-summary?date=2025-09-22&cashier=Linda`
-
-**Response:**
-```json
-{
-  "cashier": "Linda",
-  "date": "2025-09-22",
-  "totalDeposits": 6,
-  "totalWithdrawals": 3,
-  "endOfDayBalance": 5500,
-  "currencyBreakdown": {
-    "EUR": 1000,
-    "BGN": 4500
-  }
-}
-```
-
-### 3.2. Currency Summary
-**Endpoint:** `GET /cashreportingservice/api/v1/reports/currency-summary` <br>
-**Example request with date filter applied:**
-<br>`GET http://localhost:8081/cashreportingservice/api/v1/reports/currency-summary?date=2025-09-22`
-
-**Response:**
-```json
-{
-  "EUR": 5200,
-  "BGN": 8300
-}
-```
-
-### 3.3. Cashier Activity
-**Endpoint:** `GET /cashreportingservice/api/v1/reports/cashier-activity` <br>
-**Example request with all filters applied:**
-<br>`GET http://localhost:8081/cashreportingservice/api/v1/reports/cashier-activity?startDate=2025-09-21T00:00:00&endDate=2025-09-23T23:59:59&cashier=Linda`
-
-**Response:**
-```json
-[
-  {
-    "operations": {
-      "DEPOSIT|LINDA|EUR": 2,
-      "DEPOSIT|LINDA|BGN": 1
-    },
-    "timestamp": [
-      2025,
-      9,
-      22,
-      21,
-      35,
-      24,
-      662897156
-    ],
-    "cashier": "LINDA",
-    "balances": {
-      "BGN": [
-        {
-          "quantity": 40,
-          "value": 50,
-          "totalAmount": 2000,
-          "timestamp": "2025-09-22T21:00:33"
-        }
-      ],
-      "EUR": [
-        {
-          "quantity": 22,
-          "value": 50,
-          "totalAmount": 1100,
-          "timestamp": "2025-09-22T21:01:38"
-        }
-      ]
-    }
-  }
-]
-```
-
----
-
-## Project Description
-The **Cash Desk Module API** provides endpoints for managing cash balances and transactions for a cashier system. The API enables fetching cash balances within a specified date range and supports proper validation and error handling. The most up-to-date branch at the moment is the **read-config-files-from-cashoperations-config-repo** branch. This branch demonstrates a microservice configuration setup using Spring Cloud Config Server. It features automatic, distributed configuration updates via Spring Cloud Bus and RabbitMQ with comprehensive monitoring through Spring Cloud's observability tools.
-
-## Technologies Used
-- Java 17 (upgraded to Java 21)
-- Spring Boot
-- Spring Transactions module `spring-tx`
-- Maven
-- Hibernate Validator (Jakarta Validation API)
-- Lombok
-- SLF4J Logging
 
 ---
 
