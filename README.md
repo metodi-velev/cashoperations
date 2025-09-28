@@ -1,6 +1,99 @@
 # Cash Desk Module API
 
 ---
+
+## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices:
+### 1. Open a command prompt in the `docker-compose\default` directory
+### 2. Run `docker-compose up -d` in the terminal
+
+---
+
+## NEW API Endpoints in Cashdocumentsservice Microservice
+
+### 1. Upload custom files (and generate daily cashoperations summary report)
+**Endpoint:** `POST /api/v1/documents/uploader` <br>
+**Example request:**
+<br>`POST http://localhost:8082/cashdocumentsservice/api/v1/documents/uploader`
+
+**Description:** Upload custom files selected by the user. If the user selects `getAndSaveDailySummary`
+with `yes` value, then an asynchronous HTTP Request is sent with the help of WebClient to get
+the cashoperations daily summary report from the `cashreportingservice` microservice.
+The daily summary report is then saved to the in memory H2 DB and to the file system.
+
+**Request Parameters:**
+| Parameter   | Type         | Required | Description                                      |
+|------------|-------------|----------|--------------------------------------------------|
+| `fileGroup` | `String` (ISO-8601) | Yes       | Example value: `"certificates"` |
+| `files`   | `MultipartFile[]` (ISO-8601) | Yes       | Custom file(s) to be uploaded < 100KB each   |
+| `getAndSaveDailySummary`  | `String`     | No       | Example value: `"yes"`, get cash operations daily summary from cashreportingservice using WebClient                   |
+
+**Response:**
+```json
+HTTP Response Status 201 Created
+```
+
+---
+
+### 2. Get and save to disk all files belonging to `fileGroup`. If more than
+    one file is found, zip them and then save the zipped file.
+**Endpoint:** `GET /api/v1/documents/downloader` <br>
+**Example request:**
+<br>`GET http://localhost:8082/cashdocumentsservice/api/v1/documents/downloader?fileGroup=certificates`
+
+**Description:** Get and save to disk all files belonging to `fileGroup`. If more than
+one file is found, zip them and then save the zipped file.
+
+**Request Parameters:**
+| Parameter   | Type         | Required | Description                                      |
+|------------|-------------|----------|--------------------------------------------------|
+| `fileGroup` | `String` (ISO-8601) | Yes       | Example value: `"certificates"` |
+
+**Response:**
+```json
+HTTP Response Status 200 OK
+HTTP Response body: ResponseEntity<byte[]>
+```
+
+---
+
+### 3. Get the metadata to all files saved in the H2 DB.
+**Endpoint:** `GET /api/v1/documents/metadata` <br>
+**Example request:**
+<br>`GET http://localhost:8082/cashdocumentsservice/api/v1/documents/metadata`
+
+**Description:** Get the metadata to all files saved in the H2 DB.
+
+**Response:**
+```json 
+HTTP Response Status 200 OK
+```
+
+```json
+[
+  {
+    "id": 1,
+    "fileGroup": "reports",
+    "fileName": "daily_summary_20250928_131121.txt"
+  },
+  {
+    "id": 2,
+    "fileGroup": "certificates",
+    "fileName": "Test Document.txt"
+  },
+  {
+    "id": 3,
+    "fileGroup": "reports",
+    "fileName": "daily_summary_20250928_131844.txt"
+  },
+  {
+    "id": 4,
+    "fileGroup": "reports",
+    "fileName": "daily_summary_20250928_134342.txt"
+  }
+]
+```
+
+---
 ## NEW: Steps to run the microservicess and access the new endpints in cashreportingservice in default profile
 
 ### 1. Open a command prompt in the `docker-compose\default` directory 
