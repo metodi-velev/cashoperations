@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,7 +23,6 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -215,44 +215,47 @@ public class CashDocumentsClientService {
         return myFileRepository.findAll();
     }
 
-    public void saveDailySummaryToFileAndDB(Mono<ResponseEntity<DailySummaryReport>> dailySummaryMono) {
-        try {
-            // Block and get the response (use with caution in reactive applications)
-            ResponseEntity<DailySummaryReport> response = dailySummaryMono.block(Duration.ofSeconds(30));
+    private Mono<Void> saveDailySummaryToFileAndDB(ResponseEntity<DailySummaryReport> response) {
+        return Mono.fromCallable(() -> {
+            try {
+                // Block and get the response (use with caution in reactive applications)
+                //ResponseEntity<DailySummaryReport> response = dailySummaryMono.block(Duration.ofSeconds(30));
 
-            if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                DailySummaryReport report = response.getBody();
-                String fileContent = formatDailySummary(report);
+                if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    DailySummaryReport report = response.getBody();
+                    String fileContent = formatDailySummary(report);
 
-                // Generate filename with timestamp
-                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-                String filename = "daily_summary_" + timestamp + ".txt";
+                    // Generate filename with timestamp
+                    String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                    String filename = "daily_summary_" + date + ".txt";
 
-                // Save to file
-                Path filePath = Paths.get("reports", filename);
-                Files.createDirectories(filePath.getParent()); // Create directory if it doesn't exist
-                Files.write(filePath, fileContent.getBytes(StandardCharsets.UTF_8));
+                    // Save to file
+                    Path filePath = Paths.get("reports", filename);
+                    Files.createDirectories(filePath.getParent()); // Create directory if it doesn't exist
+                    Files.write(filePath, fileContent.getBytes(StandardCharsets.UTF_8));
 
-                MyFile existingFile = myFileRepository.findByFileGroupAndFileName("reports", filename);
+                    MyFile existingFile = myFileRepository.findByFileGroupAndFileName("reports", filename);
 
-                if (existingFile != null) {
-                    // Update existing file
-                    existingFile.setFile(fileContent.getBytes());
-                    myFileRepository.save(existingFile);
+                    if (existingFile != null) {
+                        // Update existing file
+                        existingFile.setFile(fileContent.getBytes());
+                        myFileRepository.save(existingFile);
+                    } else {
+                        // Create new file entry
+                        MyFile newFile = new MyFile("reports", filename, fileContent.getBytes());
+                        myFileRepository.save(newFile);
+                    }
+
+                    System.out.println("Daily summary saved to: " + filePath.toAbsolutePath());
                 } else {
-                    // Create new file entry
-                    MyFile newFile = new MyFile("reports", filename, fileContent.getBytes());
-                    myFileRepository.save(newFile);
+                    System.out.println("No daily summary data received or error response");
                 }
-
-                System.out.println("Daily summary saved to: " + filePath.toAbsolutePath());
-            } else {
-                System.out.println("No daily summary data received or error response");
+            } catch (Exception e) {
+                System.err.println("Error saving daily summary to file: " + e.getMessage());
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            System.err.println("Error saving daily summary to file: " + e.getMessage());
-            e.printStackTrace();
-        }
+            return null;
+        }).subscribeOn(Schedulers.boundedElastic()).then(); // Offload file I/O to bounded elastic scheduler
     }
 
     private String formatDailySummary(DailySummaryReport report) {
@@ -275,5 +278,19 @@ public class CashDocumentsClientService {
 
         sb.append("\nReport Generated: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return sb.toString();
+    }
+
+    public Mono<Void> processAndSaveDailySummary() {
+        return getDailySummary()
+                .flatMap(response -> {
+                    if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                        return saveDailySummaryToFileAndDB(response);
+                    } else {
+                        System.out.println("No daily summary data received or error response");
+                        return Mono.empty();
+                    }
+                })
+                .doOnError(error -> System.err.println("Error fetching daily summary: " + error.getMessage()))
+                .onErrorResume(e -> Mono.empty()); // Continue even if daily summary fails
     }
 }

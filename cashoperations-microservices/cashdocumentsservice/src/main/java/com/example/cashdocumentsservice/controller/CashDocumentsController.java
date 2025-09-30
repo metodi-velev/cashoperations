@@ -1,6 +1,5 @@
 package com.example.cashdocumentsservice.controller;
 
-import com.example.cashdocumentsservice.dto.DailySummaryReport;
 import com.example.cashdocumentsservice.dto.FileDto;
 import com.example.cashdocumentsservice.model.MyFile;
 import com.example.cashdocumentsservice.service.CashDocumentsClientService;
@@ -65,38 +64,39 @@ public class CashDocumentsController {
      * @see org.springframework.boot.autoconfigure.web.servlet.MultipartProperties
      */
     @PostMapping(value = "/uploader", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadFile(
+    public Mono<ResponseEntity<Void>> uploadFile(
             @RequestParam("fileGroup") String fileGroup,
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "getAndSaveDailySummary", required = false) Optional<String> getAndSaveDailySummary) {
 
-        try {
-            if (getAndSaveDailySummary.isPresent() && getAndSaveDailySummary.get().equalsIgnoreCase("yes")) {
-                Mono<ResponseEntity<DailySummaryReport>> dailySummaryMono = cashDocumentsClientService.getDailySummary();
+        Mono<Void> dailySummaryProcess = Mono.empty();
 
-                // Process and save the daily summary
-                cashDocumentsClientService.saveDailySummaryToFileAndDB(dailySummaryMono);
-            }
-
-            for (MultipartFile file : files) {
-                // Check if file already exists for this fileGroup
-                MyFile existingFile = cashDocumentsClientService.findByFileGroupAndFileName(fileGroup, file.getOriginalFilename());
-
-                if (existingFile != null) {
-                    // Update existing file
-                    existingFile.setFile(file.getBytes());
-                    cashDocumentsClientService.save(existingFile);
-                } else {
-                    // Create new file entry
-                    MyFile newFile = new MyFile(fileGroup, file.getOriginalFilename(), file.getBytes());
-                    cashDocumentsClientService.save(newFile);
-                }
-            }
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (getAndSaveDailySummary.isPresent() && getAndSaveDailySummary.get().equalsIgnoreCase("yes")) {
+            dailySummaryProcess = cashDocumentsClientService.processAndSaveDailySummary();
         }
+        return dailySummaryProcess
+                .then(Mono.fromCallable(() -> {
+                    // Your existing file upload logic here
+                    for (MultipartFile file : files) {
+                        // Check if file already exists for this fileGroup
+                        MyFile existingFile = cashDocumentsClientService.findByFileGroupAndFileName(fileGroup, file.getOriginalFilename());
+
+                        if (existingFile != null) {
+                            // Update existing file
+                            existingFile.setFile(file.getBytes());
+                            cashDocumentsClientService.save(existingFile);
+                        } else {
+                            // Create new file entry
+                            MyFile newFile = new MyFile(fileGroup, file.getOriginalFilename(), file.getBytes());
+                            cashDocumentsClientService.save(newFile);
+                        }
+                    }
+                    return ResponseEntity.status(HttpStatus.CREATED).<Void>build();
+                }))
+                .onErrorResume(e -> {
+                    System.err.println("Error in upload process: " + e.getMessage());
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                });
     }
 
     /**
