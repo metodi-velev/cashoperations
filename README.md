@@ -179,7 +179,9 @@ HTTP Response Status 200 OK
 ---
 
 ## Project Description
-The **Cash Desk Module API** provides endpoints for managing cash balances and transactions for a cashier system. The API enables fetching cash balances within a specified date range and supports proper validation and error handling. The most up-to-date branch at the moment is the **read-config-files-from-cashoperations-config-repo** branch. This branch demonstrates a microservice configuration setup using Spring Cloud Config Server. It features automatic, distributed configuration updates via Spring Cloud Bus and RabbitMQ with comprehensive monitoring through Spring Cloud's observability tools.
+The **Cash Desk Module API** provides endpoints for managing cash balances and transactions for a cashier system. The API enables fetching cash balances within a specified date range and supports proper validation and error handling.
+The most up-to-date branch at the moment is the **read-config-files-from-cashoperations-config-repo** branch. This branch demonstrates a microservice configuration setup using Spring Cloud Config Server. 
+It features automatic, distributed configuration updates via Spring Cloud Bus and RabbitMQ with comprehensive monitoring through Spring Cloud's observability tools.
 
 ## Technologies Used
 - Java 17 (upgraded to Java 21)
