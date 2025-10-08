@@ -2,7 +2,13 @@
 
 ---
 
-## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices:
+## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices in a Kubernetes(K8S) Cluster:
+### 1. Open a command prompt in the `k8s` directory
+### 2. Run `kubectl apply -f <service-yml-file>` in the terminal for all services according to their numbering
+
+---
+
+## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices in a Docker Host:
 ### 1. Open a command prompt in the `docker-compose\default` directory
 ### 2. Run `docker-compose up -d` in the terminal
 
