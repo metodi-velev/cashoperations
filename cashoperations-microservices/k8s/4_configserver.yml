@@ -19,6 +19,12 @@ spec:
           image: mvel1603/configserver:spring-cloud-bus-monitor-java-21
           ports:
             - containerPort: 8071
+          env:
+            - name: SPRING_RABBITMQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: cashoperations-microservices-configmap
+                  key: RABBITMQ_APPLICATION_NAME
 ---
 apiVersion: v1
 kind: Service

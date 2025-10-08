@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cashreportingservice-deployment
+  labels:
+    app: cashreportingservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cashreportingservice
+  template:
+    metadata:
+      labels:
+        app: cashreportingservice
+    spec:
+      containers:
+      - name: cashreportingservice
+        image: mvel1603/cashreportingservice:spring-cloud-bus-monitor-java-21
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SPRING_APPLICATION_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: cashoperations-microservices-configmap
+              key: CASHOPERATIONS_APPLICATION_NAME
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom: 
+            configMapKeyRef:
+              name: cashoperations-microservices-configmap
+              key: SPRING_PROFILES_ACTIVE
+        - name: SPRING_CONFIG_IMPORT
+          valueFrom: 
+            configMapKeyRef:
+              name: cashoperations-microservices-configmap
+              key: SPRING_CONFIG_IMPORT
+        - name: FIB_AUTH_API_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: cashoperations-microservices-configmap
+              key: FIB_AUTH_API_KEY
+        - name: CASHOPERATIONS_SERVICE_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: cashoperations-microservices-configmap
+              key: CASHOPERATIONS_SERVICE_BASE_URL
+#        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+#          valueFrom:
+#            configMapKeyRef:
+#              name: cashoperations-microservices-configmap
+#              key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cashreportingservice
+spec:
+  selector:
+    app: cashreportingservice
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
