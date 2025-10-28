@@ -2,6 +2,18 @@
 
 ---
 
+## Eureka Server Registered Apps `http://localhost:8070/eureka/apps`
+- http://localhost:8070/eureka/apps/cashoperations
+- http://localhost:8070/eureka/apps/cashreportingservice
+- http://localhost:8070/eureka/apps/cashdocumentsservice
+
+## Shutdown a particular microservice gracefully using its actuator endpoint:
+- HTTP POST request to http://localhost:8080/actuator/shutdown
+- HTTP POST request to http://localhost:8081/cashreportingservice/actuator/shutdown
+- HTTP POST request to http://localhost:8082/cashdocumentsservice/actuator/shutdown
+
+---
+
 ## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices in a Kubernetes(K8S) Cluster:
 ### 1. Open a command prompt in the `k8s` directory
 ### 2. Run `kubectl apply -f <service-yml-file>` in the terminal for all services according to their numbering
