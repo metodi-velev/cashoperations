@@ -12,6 +12,8 @@
 - HTTP POST request to http://localhost:8081/cashreportingservice/actuator/shutdown
 - HTTP POST request to http://localhost:8082/cashdocumentsservice/actuator/shutdown
 
+---
+
 ## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices in a Kubernetes(K8S) Cluster:
 ### 1. Open a command prompt in the `k8s` directory
 ### 2. Run `kubectl apply -f <service-yml-file>` in the terminal for all services according to their numbering
