@@ -109,6 +109,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -177,7 +181,7 @@
                 <version>3.4.2</version>
                 <configuration>
                     <to>
-                        <image>mvel1603/${project.artifactId}:spring-cloud-bus-monitor-java-21</image>
+                        <image>mvel1603/${project.artifactId}:eurekaserver</image>
                         <!-- Build the docker image with "mvn compile jib:dockerBuild" command -->
                     </to>
                 </configuration>

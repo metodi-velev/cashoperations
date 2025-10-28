@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cashdocumentsservice-deployment
+  name: cashoperations-deployment
   labels:
-    app: cashdocumentsservice
+    app: cashoperations
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cashdocumentsservice
+      app: cashoperations
   template:
     metadata:
       labels:
-        app: cashdocumentsservice
+        app: cashoperations
     spec:
       containers:
-      - name: cashdocumentsservice
-        image: mvel1603/cashdocumentsservice:spring-cloud-bus-monitor-java-21
+      - name: cashoperations
+        image: mvel1603/cashoperations:eurekaserver
         ports:
-        - containerPort: 8082
+        - containerPort: 8080
         env:
         - name: SPRING_APPLICATION_NAME
           valueFrom:
             configMapKeyRef:
               name: cashoperations-microservices-configmap
-              key: CASHDOCUMENTSSERVICE_APPLICATION_NAME
+              key: CASHOPERATIONS_APPLICATION_NAME
         - name: SPRING_PROFILES_ACTIVE
           valueFrom: 
             configMapKeyRef:
@@ -40,11 +40,6 @@ spec:
             configMapKeyRef:
               name: cashoperations-microservices-configmap
               key: FIB_AUTH_API_KEY
-        - name: CASHREPORTINGSERVICE_SERVICE_BASE_URL
-          valueFrom:
-            configMapKeyRef:
-              name: cashoperations-microservices-configmap
-              key: CASHREPORTINGSERVICE_SERVICE_BASE_URL
 #        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
 #          valueFrom:
 #            configMapKeyRef:
@@ -54,12 +49,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cashdocumentsservice
+  name: cashoperations
 spec:
   selector:
-    app: cashdocumentsservice
+    app: cashoperations
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 8082
-      targetPort: 8082
+      port: 8080
+      targetPort: 8080

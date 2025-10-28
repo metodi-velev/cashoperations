@@ -1,6 +1,6 @@
 services:
   cashoperations:
-    image: mvel1603/cashoperations:spring-cloud-bus-monitor-java-21
+    image: mvel1603/cashoperations:eurekaserver
     build: .
     container_name: cashoperations
     ports:
@@ -49,7 +49,7 @@ services:
     #   retries: 5
 
   cashreportingservice:
-    image: mvel1603/cashreportingservice:spring-cloud-bus-monitor-java-21
+    image: mvel1603/cashreportingservice:eurekaserver
     build: .
     container_name: cashreportingservice
     ports:
@@ -91,7 +91,7 @@ services:
     command: [ "--spring.output.ansi.enabled=ALWAYS" ]
 
   cashdocumentsservice:
-    image: mvel1603/cashdocumentsservice:spring-cloud-bus-monitor-java-21
+    image: mvel1603/cashdocumentsservice:eurekaserver
     build: .
     container_name: cashdocumentsservice
     ports:
@@ -127,7 +127,7 @@ services:
     command: [ "--spring.output.ansi.enabled=ALWAYS" ]
 
   configserver:
-    image: mvel1603/configserver:spring-cloud-bus-monitor-java-21
+    image: mvel1603/configserver:eurekaserver
     build: .
     container_name: configserver
     ports:

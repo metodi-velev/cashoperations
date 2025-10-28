@@ -1,0 +1,50 @@
+server:
+  port: 8070
+
+spring:
+  application:
+    name: eurekaserver
+  threads:
+    virtual:
+      enabled: true
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  cloud:
+    config:
+      uri: http://localhost:8071
+      fail-fast: false
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+
+  output:
+    ansi:
+      enabled: ALWAYS
+  profiles:
+    active:
+      - "qa"
+  # Reduce unnecessary autoconfiguration
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+fib:
+  auth:
+    api-key: f9Uie8nNf112hx8s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always

@@ -107,6 +107,9 @@ management:
     web:
       exposure:
         include: "*"
+  info:
+    env:
+      enabled: true
   health:
     readiness-state:
       enabled: true
@@ -117,3 +120,20 @@ management:
       probes:
         enabled: true
       show-details: always
+    shutdown:
+      access: unrestricted
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "cashreportingservice"
+    description: "Cash Reporting Microservice Application"
+    version: "1.0.0"

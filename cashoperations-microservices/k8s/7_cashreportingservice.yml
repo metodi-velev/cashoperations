@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: cashreportingservice
-        image: mvel1603/cashreportingservice:spring-cloud-bus-monitor-java-21
+        image: mvel1603/cashreportingservice:eurekaserver
         ports:
         - containerPort: 8081
         env:

@@ -215,8 +215,9 @@ public class CashDeskServiceImpl implements CashDeskService {
         BigDecimal bigDecimalDenominationsAmountSum = new BigDecimal(denominationsAmountSum);
 
         if (amount.compareTo(bigDecimalDenominationsAmountSum) != 0) {
-            log.error("Invalid deposit request. Amount {} does not match overall denominations sum {}.", amount, bigDecimalDenominationsAmountSum);
-            throw new InvalidAmountException("Invalid deposit request. Amount "
+            String operation = request.getOperationType().toLowerCase();
+            log.error("Invalid " + operation + " request. Amount {} does not match overall denominations sum {}.", amount, bigDecimalDenominationsAmountSum);
+            throw new InvalidAmountException("Invalid " + operation + " request. Amount "
                     + amount
                     + " does not match overall denominations sum "
                     + bigDecimalDenominationsAmountSum + "."
