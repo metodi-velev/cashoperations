@@ -2,6 +2,99 @@
 
 ---
 
+## New Endpoint - get consolidated response from all available microservices:
+- http://localhost:8082/cashdocumentsservice/api/v1/fetchCashOperationsDetails?date=2025-10-29
+
+**Response:**
+```json
+HTTP Response Status 200 OK
+HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
+```
+
+```json
+{
+  "operations": {
+    "DEPOSIT|LINDA|EUR": 1,
+    "WITHDRAWAL|PETER|BGN": 1,
+    "DEPOSIT|PETER|BGN": 3,
+    "DEPOSIT|LINDA|BGN": 7,
+    "WITHDRAWAL|LINDA|BGN": 5
+  },
+  "timestamp": [
+    2025,
+    10,
+    29,
+    18,
+    8,
+    42,
+    424689100
+  ],
+  "cashier": "LINDA",
+  "balances": {
+    "BGN": [
+      {
+        "quantity": 70,
+        "value": 10,
+        "totalAmount": 700,
+        "timestamp": "2025-10-29T18:06:23"
+      },
+      {
+        "quantity": 30,
+        "value": 50,
+        "totalAmount": 1500,
+        "timestamp": "2025-10-29T18:06:23"
+      }
+    ],
+    "EUR": [
+      {
+        "quantity": 30,
+        "value": 50,
+        "totalAmount": 1500,
+        "timestamp": "2025-10-29T18:08:36"
+      },
+      {
+        "quantity": 110,
+        "value": 10,
+        "totalAmount": 1100,
+        "timestamp": "2025-10-29T18:08:36"
+      }
+    ]
+  },
+  "date": "2025-10-29",
+  "totalDeposits": 11,
+  "totalWithdrawals": 6,
+  "endOfDayBalance": 12000,
+  "currencyBreakdown": {
+    "EUR": 6600,
+    "BGN": 5400
+  },
+  "filesDtos": [
+    {
+      "id": 1,
+      "fileGroup": "reports",
+      "fileName": "daily_summary_20251029.txt"
+    },
+    {
+      "id": 2,
+      "fileGroup": "certificates",
+      "fileName": "Cover Letter.docx"
+    },
+    {
+      "id": 3,
+      "fileGroup": "certificates",
+      "fileName": "Cover Letter.pdf"
+    },
+    {
+      "id": 4,
+      "fileGroup": "certificates",
+      "fileName": "Cover-Letter.txt"
+    }
+  ]
+}
+```
+
+---
+
 ## Eureka Server Registered Apps `http://localhost:8070/eureka/apps`
 - http://localhost:8070/eureka/apps/cashoperations
 - http://localhost:8070/eureka/apps/cashreportingservice
