@@ -1,6 +1,7 @@
 package com.example.cashreportingservice.service;
 
 import com.example.cashreportingservice.dto.CashBalanceResponse;
+import com.example.cashreportingservice.dto.Currency;
 import com.example.cashreportingservice.dto.DailySummaryReport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class SummaryReportService {
         report.setDate(firstBalance.getTimestamp().toLocalDate().toString());
 
         // Calculate totals from all balances
-        Map<String, BigDecimal> currencyTotals = new ConcurrentHashMap<>();
+        Map<Currency, BigDecimal> currencyTotals = new ConcurrentHashMap<>();
 
         balanceList.forEach(balance -> {
             balance.getBalances().forEach((currency, denominations) -> {
@@ -72,8 +73,8 @@ public class SummaryReportService {
                 .sum();
     }
 
-    public Map<String, BigDecimal> generateCurrencySummary(List<CashBalanceResponse> balanceList) {
-        Map<String, BigDecimal> currencySummary = new ConcurrentHashMap<>();
+    public Map<Currency, BigDecimal> generateCurrencySummary(List<CashBalanceResponse> balanceList) {
+        Map<Currency, BigDecimal> currencySummary = new ConcurrentHashMap<>();
 
         balanceList.forEach(balance -> {
             balance.getBalances().forEach((currency, denominations) -> {

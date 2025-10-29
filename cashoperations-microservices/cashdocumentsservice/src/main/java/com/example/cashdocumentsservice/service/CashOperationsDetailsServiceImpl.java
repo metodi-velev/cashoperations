@@ -1,9 +1,6 @@
 package com.example.cashdocumentsservice.service;
 
-import com.example.cashdocumentsservice.dto.CashBalanceResponse;
-import com.example.cashdocumentsservice.dto.CashOperationsDetails;
-import com.example.cashdocumentsservice.dto.DailySummaryReport;
-import com.example.cashdocumentsservice.dto.Denomination;
+import com.example.cashdocumentsservice.dto.*;
 import com.example.cashdocumentsservice.model.MyFile;
 import com.example.cashdocumentsservice.service.client.CashOperationsFeignClient;
 import com.example.cashdocumentsservice.service.client.CashReportingServiceFeignClient;
@@ -51,14 +48,15 @@ public class CashOperationsDetailsServiceImpl implements CashOperationsDetailsSe
                 Optional.ofNullable(transactions.getBody()).orElseThrow()
         );
 
-        Map<String, List<Denomination>> balances = new ConcurrentHashMap<>();
+        Map<Currency, List<Denomination>> balances = new ConcurrentHashMap<>();
         List<String> cashiers = new ArrayList<>();
 
-        for (CashBalanceResponse cashBalance : cashBalances.orElseThrow()) {
-            balances.put(cashBalance.getCashier(), cashBalance.getBalances().get("BGN"));
-            balances.put(cashBalance.getCashier(), cashBalance.getBalances().get("EUR"));
+        cashBalances.orElseThrow().forEach(cashBalance -> {
+            Map<Currency, List<Denomination>> cashBalanceMap = cashBalance.getBalances();
+            balances.put(Currency.BGN, cashBalanceMap.get(Currency.BGN));
+            balances.put(Currency.EUR, cashBalanceMap.get(Currency.EUR));
             cashiers.add(cashBalance.getCashier());
-        }
+        });
 
         cashOperationsDetails.setOperations(cashBalances.orElseThrow().getLast().getOperations());
         cashOperationsDetails.setTimestamp(cashBalances.orElseThrow().getLast().getTimestamp());

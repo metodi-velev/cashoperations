@@ -15,26 +15,20 @@ HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
 {
   "operations": {
     "DEPOSIT|LINDA|EUR": 1,
-    "WITHDRAWAL|LINDA|EUR": 1,
-    "WITHDRAWAL|MARTINA|BGN": 1,
-    "DEPOSIT|MARTINA|EUR": 1,
-    "DEPOSIT|LINDA|BGN": 1,
-    "WITHDRAWAL|MARTINA|EUR": 1,
-    "WITHDRAWAL|PETER|EUR": 1,
     "DEPOSIT|MARTINA|BGN": 1,
-    "WITHDRAWAL|PETER|BGN": 1,
     "DEPOSIT|PETER|BGN": 1,
     "DEPOSIT|PETER|EUR": 1,
-    "WITHDRAWAL|LINDA|BGN": 1
+    "DEPOSIT|MARTINA|EUR": 1,
+    "DEPOSIT|LINDA|BGN": 1
   },
   "timestamp": [
     2025,
     10,
     29,
-    19,
-    48,
-    56,
-    490404900
+    20,
+    59,
+    55,
+    877602200
   ],
   "cashiers": [
     "MARTINA",
@@ -42,56 +36,54 @@ HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
     "LINDA"
   ],
   "balances": {
-    "MARTINA": [
+    "BGN": [
       {
-        "quantity": 100,
-        "value": 10,
-        "totalAmount": 1000,
-        "timestamp": "2025-10-29T19:13:13"
+        "quantity": 10,
+        "value": 50,
+        "totalAmount": 500,
+        "timestamp": "2025-10-29T20:01:43"
       },
       {
-        "quantity": 20,
-        "value": 50,
-        "totalAmount": 1000,
-        "timestamp": "2025-10-29T19:13:13"
+        "quantity": 51,
+        "value": 10,
+        "totalAmount": 510,
+        "timestamp": "2025-10-29T20:33:12"
+      },
+      {
+        "quantity": 1,
+        "value": 5,
+        "totalAmount": 5,
+        "timestamp": "2025-10-29T20:33:12"
       }
     ],
-    "PETER": [
+    "EUR": [
       {
-        "quantity": 100,
+        "quantity": 101,
         "value": 10,
-        "totalAmount": 1000,
-        "timestamp": "2025-10-29T19:13:18"
+        "totalAmount": 1010,
+        "timestamp": "2025-10-29T20:33:43"
       },
       {
         "quantity": 20,
         "value": 50,
         "totalAmount": 1000,
-        "timestamp": "2025-10-29T19:13:18"
-      }
-    ],
-    "LINDA": [
-      {
-        "quantity": 100,
-        "value": 10,
-        "totalAmount": 1000,
-        "timestamp": "2025-10-29T19:13:34"
+        "timestamp": "2025-10-29T20:01:43"
       },
       {
-        "quantity": 20,
-        "value": 50,
-        "totalAmount": 1000,
-        "timestamp": "2025-10-29T19:13:34"
+        "quantity": 1,
+        "value": 5,
+        "totalAmount": 5,
+        "timestamp": "2025-10-29T20:33:43"
       }
     ]
   },
   "date": "2025-10-29",
   "totalDeposits": 6,
-  "totalWithdrawals": 6,
-  "endOfDayBalance": 9000,
+  "totalWithdrawals": 0,
+  "endOfDayBalance": 9090,
   "currencyBreakdown": {
-    "EUR": 6000,
-    "BGN": 3000
+    "EUR": 6045,
+    "BGN": 3045
   },
   "filesDtos": [
     {

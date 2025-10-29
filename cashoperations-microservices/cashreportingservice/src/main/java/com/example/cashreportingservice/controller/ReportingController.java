@@ -1,12 +1,16 @@
 package com.example.cashreportingservice.controller;
 
 import com.example.cashreportingservice.dto.CashBalanceResponse;
+import com.example.cashreportingservice.dto.Currency;
 import com.example.cashreportingservice.dto.DailySummaryReport;
 import com.example.cashreportingservice.service.CashOperationsClientService;
 import com.example.cashreportingservice.service.SummaryReportService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -71,7 +75,7 @@ public class ReportingController {
     }
 
     @GetMapping("/currency-summary")
-    public Mono<ResponseEntity<Map<String, BigDecimal>>> getCurrencySummary(
+    public Mono<ResponseEntity<Map<Currency, BigDecimal>>> getCurrencySummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         LocalDateTime startOfDay = date.atStartOfDay();

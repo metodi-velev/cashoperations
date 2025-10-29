@@ -26,7 +26,7 @@ public class CashOperationsDetails {
 
     @Schema(description = "Balances per currency with their denomination breakdown. Keys are currency codes (BGN, EUR).",
             example = "{\n  \"BGN\": [ { \"quantity\": 10, \"value\": 10, \"totalAmount\": 100, \"timestamp\": \"2025-08-24T18:45:00\" }, { \"quantity\": 2, \"value\": 50, \"totalAmount\": 100, \"timestamp\": \"2025-08-24T18:45:00\" } ],\n  \"EUR\": [ { \"quantity\": 1, \"value\": 100, \"totalAmount\": 100, \"timestamp\": \"2025-08-24T18:46:00\" } ]\n}")
-    private Map<String, List<Denomination>> balances;
+    private Map<Currency, List<Denomination>> balances;
 
 
 

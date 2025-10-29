@@ -12,7 +12,7 @@ public class DailySummaryReport {
     private BigDecimal totalDeposits;
     private BigDecimal totalWithdrawals;
     private BigDecimal endOfDayBalance;
-    private Map<String, BigDecimal> currencyBreakdown;
+    private Map<Currency, BigDecimal> currencyBreakdown;
 
     public DailySummaryReport() {
         this.totalDeposits = BigDecimal.ZERO;
