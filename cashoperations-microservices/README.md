@@ -13,70 +13,194 @@ HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
 
 ```json
 {
-  "operations": {
-    "DEPOSIT|LINDA|EUR": 1,
-    "DEPOSIT|MARTINA|BGN": 1,
-    "DEPOSIT|PETER|BGN": 1,
-    "DEPOSIT|PETER|EUR": 1,
-    "DEPOSIT|MARTINA|EUR": 1,
-    "DEPOSIT|LINDA|BGN": 1
-  },
-  "timestamp": [
-    2025,
-    10,
-    29,
-    20,
-    59,
-    55,
-    877602200
-  ],
-  "cashiers": [
-    "MARTINA",
-    "PETER",
-    "LINDA"
-  ],
-  "balances": {
-    "BGN": [
-      {
-        "quantity": 10,
-        "value": 50,
-        "totalAmount": 500,
-        "timestamp": "2025-10-29T20:01:43"
+  "cashBalanceResponses": [
+    {
+      "operations": {
+        "DEPOSIT|LINDA|EUR": 1,
+        "DEPOSIT|MARTINA|BGN": 1,
+        "DEPOSIT|PETER|BGN": 1,
+        "DEPOSIT|PETER|EUR": 1,
+        "DEPOSIT|MARTINA|EUR": 1,
+        "DEPOSIT|LINDA|BGN": 1
       },
-      {
-        "quantity": 51,
-        "value": 10,
-        "totalAmount": 510,
-        "timestamp": "2025-10-29T20:33:12"
-      },
-      {
-        "quantity": 1,
-        "value": 5,
-        "totalAmount": 5,
-        "timestamp": "2025-10-29T20:33:12"
+      "timestamp": [
+        2025,
+        10,
+        29,
+        23,
+        50,
+        59,
+        183494700
+      ],
+      "cashier": "MARTINA",
+      "balances": {
+        "EUR": [
+          {
+            "quantity": 101,
+            "value": 10,
+            "totalAmount": 1010,
+            "timestamp": "2025-10-29T20:33:50"
+          },
+          {
+            "quantity": 20,
+            "value": 50,
+            "totalAmount": 1000,
+            "timestamp": "2025-10-29T20:01:43"
+          },
+          {
+            "quantity": 1,
+            "value": 5,
+            "totalAmount": 5,
+            "timestamp": "2025-10-29T20:33:50"
+          }
+        ],
+        "BGN": [
+          {
+            "quantity": 10,
+            "value": 50,
+            "totalAmount": 500,
+            "timestamp": "2025-10-29T20:01:43"
+          },
+          {
+            "quantity": 51,
+            "value": 10,
+            "totalAmount": 510,
+            "timestamp": "2025-10-29T20:33:22"
+          },
+          {
+            "quantity": 1,
+            "value": 5,
+            "totalAmount": 5,
+            "timestamp": "2025-10-29T20:33:22"
+          }
+        ]
       }
-    ],
-    "EUR": [
-      {
-        "quantity": 101,
-        "value": 10,
-        "totalAmount": 1010,
-        "timestamp": "2025-10-29T20:33:43"
+    },
+    {
+      "operations": {
+        "DEPOSIT|LINDA|EUR": 1,
+        "DEPOSIT|MARTINA|BGN": 1,
+        "DEPOSIT|PETER|BGN": 1,
+        "DEPOSIT|PETER|EUR": 1,
+        "DEPOSIT|MARTINA|EUR": 1,
+        "DEPOSIT|LINDA|BGN": 1
       },
-      {
-        "quantity": 20,
-        "value": 50,
-        "totalAmount": 1000,
-        "timestamp": "2025-10-29T20:01:43"
-      },
-      {
-        "quantity": 1,
-        "value": 5,
-        "totalAmount": 5,
-        "timestamp": "2025-10-29T20:33:43"
+      "timestamp": [
+        2025,
+        10,
+        29,
+        23,
+        50,
+        59,
+        183494700
+      ],
+      "cashier": "PETER",
+      "balances": {
+        "EUR": [
+          {
+            "quantity": 101,
+            "value": 10,
+            "totalAmount": 1010,
+            "timestamp": "2025-10-29T20:33:36"
+          },
+          {
+            "quantity": 20,
+            "value": 50,
+            "totalAmount": 1000,
+            "timestamp": "2025-10-29T20:01:43"
+          },
+          {
+            "quantity": 1,
+            "value": 5,
+            "totalAmount": 5,
+            "timestamp": "2025-10-29T20:33:36"
+          }
+        ],
+        "BGN": [
+          {
+            "quantity": 10,
+            "value": 50,
+            "totalAmount": 500,
+            "timestamp": "2025-10-29T20:01:43"
+          },
+          {
+            "quantity": 51,
+            "value": 10,
+            "totalAmount": 510,
+            "timestamp": "2025-10-29T20:33:29"
+          },
+          {
+            "quantity": 1,
+            "value": 5,
+            "totalAmount": 5,
+            "timestamp": "2025-10-29T20:33:29"
+          }
+        ]
       }
-    ]
-  },
+    },
+    {
+      "operations": {
+        "DEPOSIT|LINDA|EUR": 1,
+        "DEPOSIT|MARTINA|BGN": 1,
+        "DEPOSIT|PETER|BGN": 1,
+        "DEPOSIT|PETER|EUR": 1,
+        "DEPOSIT|MARTINA|EUR": 1,
+        "DEPOSIT|LINDA|BGN": 1
+      },
+      "timestamp": [
+        2025,
+        10,
+        29,
+        23,
+        50,
+        59,
+        183494700
+      ],
+      "cashier": "LINDA",
+      "balances": {
+        "EUR": [
+          {
+            "quantity": 101,
+            "value": 10,
+            "totalAmount": 1010,
+            "timestamp": "2025-10-29T20:33:43"
+          },
+          {
+            "quantity": 20,
+            "value": 50,
+            "totalAmount": 1000,
+            "timestamp": "2025-10-29T20:01:43"
+          },
+          {
+            "quantity": 1,
+            "value": 5,
+            "totalAmount": 5,
+            "timestamp": "2025-10-29T20:33:43"
+          }
+        ],
+        "BGN": [
+          {
+            "quantity": 10,
+            "value": 50,
+            "totalAmount": 500,
+            "timestamp": "2025-10-29T20:01:43"
+          },
+          {
+            "quantity": 51,
+            "value": 10,
+            "totalAmount": 510,
+            "timestamp": "2025-10-29T20:33:12"
+          },
+          {
+            "quantity": 1,
+            "value": 5,
+            "totalAmount": 5,
+            "timestamp": "2025-10-29T20:33:12"
+          }
+        ]
+      }
+    }
+  ],
   "date": "2025-10-29",
   "totalDeposits": 6,
   "totalWithdrawals": 0,

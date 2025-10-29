@@ -1,6 +1,8 @@
 package com.example.cashdocumentsservice.service;
 
-import com.example.cashdocumentsservice.dto.*;
+import com.example.cashdocumentsservice.dto.CashBalanceResponse;
+import com.example.cashdocumentsservice.dto.CashOperationsDetails;
+import com.example.cashdocumentsservice.dto.DailySummaryReport;
 import com.example.cashdocumentsservice.model.MyFile;
 import com.example.cashdocumentsservice.service.client.CashOperationsFeignClient;
 import com.example.cashdocumentsservice.service.client.CashReportingServiceFeignClient;
@@ -14,9 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -48,20 +48,9 @@ public class CashOperationsDetailsServiceImpl implements CashOperationsDetailsSe
                 Optional.ofNullable(transactions.getBody()).orElseThrow()
         );
 
-        Map<Currency, List<Denomination>> balances = new ConcurrentHashMap<>();
-        List<String> cashiers = new ArrayList<>();
-
-        cashBalances.orElseThrow().forEach(cashBalance -> {
-            Map<Currency, List<Denomination>> cashBalanceMap = cashBalance.getBalances();
-            balances.put(Currency.BGN, cashBalanceMap.get(Currency.BGN));
-            balances.put(Currency.EUR, cashBalanceMap.get(Currency.EUR));
-            cashiers.add(cashBalance.getCashier());
-        });
-
-        cashOperationsDetails.setOperations(cashBalances.orElseThrow().getLast().getOperations());
-        cashOperationsDetails.setTimestamp(cashBalances.orElseThrow().getLast().getTimestamp());
-        cashOperationsDetails.setCashiers(cashiers);
-        cashOperationsDetails.setBalances(balances);
+        cashOperationsDetails.setCashBalanceResponses(
+                cashBalances.orElse(new ArrayList<>())
+        );
 
         Mono<ResponseEntity<DailySummaryReport>> dailyReport =
                 Mono.fromCallable(() ->

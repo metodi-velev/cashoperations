@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Schema(name = "CashBalanceResponse", description = "Represents the cash balances snapshot for a cashier at a given timestamp, grouped by currency and broken down by denominations.")
 public class CashBalanceResponse {
     @Schema(description = "Statistics info in order to calculate total amount of deposits/withdrawals per cashier.")
-    private final ConcurrentHashMap<String, Integer> operations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Integer> operations =  new ConcurrentHashMap<>();
 
     @Schema(description = "Timestamp when the snapshot was generated (UTC)", example = "2025-08-24T20:38:00", type = "string", format = "date-time")
     private LocalDateTime timestamp;
