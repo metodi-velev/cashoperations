@@ -3,6 +3,7 @@ package com.example.cashdocumentsservice.service;
 import com.example.cashdocumentsservice.dto.CashBalanceResponse;
 import com.example.cashdocumentsservice.dto.CashOperationsDetails;
 import com.example.cashdocumentsservice.dto.DailySummaryReport;
+import com.example.cashdocumentsservice.dto.Denomination;
 import com.example.cashdocumentsservice.model.MyFile;
 import com.example.cashdocumentsservice.service.client.CashOperationsFeignClient;
 import com.example.cashdocumentsservice.service.client.CashReportingServiceFeignClient;
@@ -14,8 +15,11 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -43,14 +47,23 @@ public class CashOperationsDetailsServiceImpl implements CashOperationsDetailsSe
                         cashier
                 );
 
-        Optional<CashBalanceResponse> cashOperationsLastElement = Optional.ofNullable(
-                Optional.ofNullable(transactions.getBody()).orElseThrow().getLast()
+        Optional<List<CashBalanceResponse>> cashBalances = Optional.of(
+                Optional.ofNullable(transactions.getBody()).orElseThrow()
         );
 
-        cashOperationsDetails.setOperations(cashOperationsLastElement.orElseThrow().getOperations());
-        cashOperationsDetails.setTimestamp(cashOperationsLastElement.orElseThrow().getTimestamp());
-        cashOperationsDetails.setCashier(cashOperationsLastElement.orElseThrow().getCashier());
-        cashOperationsDetails.setBalances(cashOperationsLastElement.orElseThrow().getBalances());
+        Map<String, List<Denomination>> balances = new ConcurrentHashMap<>();
+        List<String> cashiers = new ArrayList<>();
+
+        for (CashBalanceResponse cashBalance : cashBalances.orElseThrow()) {
+            balances.put(cashBalance.getCashier(), cashBalance.getBalances().get("BGN"));
+            balances.put(cashBalance.getCashier(), cashBalance.getBalances().get("EUR"));
+            cashiers.add(cashBalance.getCashier());
+        }
+
+        cashOperationsDetails.setOperations(cashBalances.orElseThrow().getLast().getOperations());
+        cashOperationsDetails.setTimestamp(cashBalances.orElseThrow().getLast().getTimestamp());
+        cashOperationsDetails.setCashiers(cashiers);
+        cashOperationsDetails.setBalances(balances);
 
         Mono<ResponseEntity<DailySummaryReport>> dailyReport =
                 Mono.fromCallable(() ->

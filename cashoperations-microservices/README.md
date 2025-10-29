@@ -6,7 +6,7 @@
 - http://localhost:8082/cashdocumentsservice/api/v1/fetchCashOperationsDetails?date=2025-10-29
 
 **Response:**
-```json
+```text
 HTTP Response Status 200 OK
 HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
 ```
@@ -15,58 +15,83 @@ HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
 {
   "operations": {
     "DEPOSIT|LINDA|EUR": 1,
+    "WITHDRAWAL|LINDA|EUR": 1,
+    "WITHDRAWAL|MARTINA|BGN": 1,
+    "DEPOSIT|MARTINA|EUR": 1,
+    "DEPOSIT|LINDA|BGN": 1,
+    "WITHDRAWAL|MARTINA|EUR": 1,
+    "WITHDRAWAL|PETER|EUR": 1,
+    "DEPOSIT|MARTINA|BGN": 1,
     "WITHDRAWAL|PETER|BGN": 1,
-    "DEPOSIT|PETER|BGN": 3,
-    "DEPOSIT|LINDA|BGN": 7,
-    "WITHDRAWAL|LINDA|BGN": 5
+    "DEPOSIT|PETER|BGN": 1,
+    "DEPOSIT|PETER|EUR": 1,
+    "WITHDRAWAL|LINDA|BGN": 1
   },
   "timestamp": [
     2025,
     10,
     29,
-    18,
-    8,
-    42,
-    424689100
+    19,
+    48,
+    56,
+    490404900
   ],
-  "cashier": "LINDA",
+  "cashiers": [
+    "MARTINA",
+    "PETER",
+    "LINDA"
+  ],
   "balances": {
-    "BGN": [
+    "MARTINA": [
       {
-        "quantity": 70,
+        "quantity": 100,
         "value": 10,
-        "totalAmount": 700,
-        "timestamp": "2025-10-29T18:06:23"
+        "totalAmount": 1000,
+        "timestamp": "2025-10-29T19:13:13"
       },
       {
-        "quantity": 30,
+        "quantity": 20,
         "value": 50,
-        "totalAmount": 1500,
-        "timestamp": "2025-10-29T18:06:23"
+        "totalAmount": 1000,
+        "timestamp": "2025-10-29T19:13:13"
       }
     ],
-    "EUR": [
+    "PETER": [
       {
-        "quantity": 30,
-        "value": 50,
-        "totalAmount": 1500,
-        "timestamp": "2025-10-29T18:08:36"
+        "quantity": 100,
+        "value": 10,
+        "totalAmount": 1000,
+        "timestamp": "2025-10-29T19:13:18"
       },
       {
-        "quantity": 110,
+        "quantity": 20,
+        "value": 50,
+        "totalAmount": 1000,
+        "timestamp": "2025-10-29T19:13:18"
+      }
+    ],
+    "LINDA": [
+      {
+        "quantity": 100,
         "value": 10,
-        "totalAmount": 1100,
-        "timestamp": "2025-10-29T18:08:36"
+        "totalAmount": 1000,
+        "timestamp": "2025-10-29T19:13:34"
+      },
+      {
+        "quantity": 20,
+        "value": 50,
+        "totalAmount": 1000,
+        "timestamp": "2025-10-29T19:13:34"
       }
     ]
   },
   "date": "2025-10-29",
-  "totalDeposits": 11,
+  "totalDeposits": 6,
   "totalWithdrawals": 6,
-  "endOfDayBalance": 12000,
+  "endOfDayBalance": 9000,
   "currencyBreakdown": {
-    "EUR": 6600,
-    "BGN": 5400
+    "EUR": 6000,
+    "BGN": 3000
   },
   "filesDtos": [
     {
@@ -139,7 +164,7 @@ The daily summary report is then saved to the in memory H2 DB and to the file sy
 | `getAndSaveDailySummary`  | `String`     | No       | Example value: `"yes"`, get cash operations daily summary from cashreportingservice using WebClient                   |
 
 **Response:**
-```json
+```text
 HTTP Response Status 201 Created
 ```
 
@@ -159,7 +184,7 @@ one file is found, zip them and then save the zipped file.
 | `fileGroup` | `String` (ISO-8601) | Yes       | Example value: `"certificates"` |
 
 **Response:**
-```json
+```text
 HTTP Response Status 200 OK
 HTTP Response body: ResponseEntity<byte[]>
 ```
@@ -174,7 +199,7 @@ HTTP Response body: ResponseEntity<byte[]>
 **Description:** Get the metadata to all files saved in the H2 DB.
 
 **Response:**
-```json 
+```text 
 HTTP Response Status 200 OK
 ```
 
