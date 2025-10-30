@@ -3,7 +3,7 @@
 ---
 
 ## New Endpoint - get consolidated response from all available microservices:
-- http://localhost:8082/cashdocumentsservice/api/v1/fetchCashOperationsDetails?date=2025-10-29
+- HTTP GET to http://localhost:8082/cashdocumentsservice/api/v1/fetchCashOperationsDetails?date=2025-10-29
 
 **Response:**
 ```text
