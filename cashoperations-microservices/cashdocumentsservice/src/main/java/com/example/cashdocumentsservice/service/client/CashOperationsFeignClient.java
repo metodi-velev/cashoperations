@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @FeignClient(
         name = "cashoperations",
-        url = "http://localhost:8080",
+        url = "${cashoperations.service.base-url}",
         configuration = FeignConfig.class
 )
 public interface CashOperationsFeignClient {

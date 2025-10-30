@@ -76,6 +76,11 @@ cashreportingservice:
     base-url: http://localhost:8081/cashreportingservice
     api-key: f9Uie8nNf112hx8s
 
+cashoperations:
+  service:
+    base-url: http://localhost:8080
+    api-key: f9Uie8nNf112hx8s
+
 fib:
   auth:
     api-key: f9Uie8nNf112hx8s

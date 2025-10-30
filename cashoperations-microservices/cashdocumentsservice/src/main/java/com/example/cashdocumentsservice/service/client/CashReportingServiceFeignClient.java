@@ -12,12 +12,12 @@ import java.time.LocalDate;
 
 @FeignClient(
         name = "cashreportingservice",
-        url = "http://localhost:8081",
+        url = "${cashreportingservice.service.base-url}",
         configuration = FeignConfig.class
 )
 public interface CashReportingServiceFeignClient {
 
-    @GetMapping(value = "/cashreportingservice/api/v1/reports/daily-summary", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/api/v1/reports/daily-summary", consumes = "application/json", produces = "application/json")
     public ResponseEntity<DailySummaryReport> getDailySummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) String cashier);

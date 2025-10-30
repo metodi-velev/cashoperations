@@ -119,6 +119,7 @@ services:
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_JPA=DEBUG
       - LOGGING_LEVEL_ROOT=INFO
       - SPRING_APPLICATION_NAME=cashdocumentsservice
+      - CASHOPERATIONS_SERVICE_BASE_URL=http://cashoperations:8080/
       - CASHREPORTINGSERVICE_SERVICE_BASE_URL=http://cashreportingservice:8081/cashreportingservice/
       # Key setting: show all logs in console
     tty: true
@@ -137,6 +138,27 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  eurekaserver:
+    image: mvel1603/eurekaserver:eurekaserver
+    build: .
+    container_name: eurekaserver
+    ports:
+      - "8070:8070"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      - SPRING_APPLICATION_NAME=eurekaserver
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
       timeout: 5s
       retries: 10
