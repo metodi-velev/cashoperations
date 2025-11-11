@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: eurekaserver
-        image: mvel1603/eurekaserver:eurekaserver
+        image: mvel1603/eurekaserver:graalvm
         ports:
         - containerPort: 8070
         env:

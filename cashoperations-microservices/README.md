@@ -2,6 +2,33 @@
 
 ---
 
+## GraalVM
+- Install GraalVM for your OS. Instructions under https://www.graalvm.org/
+- For **AOT (Ahead-of-Time)** compilation with *GraalVM*, run the following command in each microservice’s parent directory:: `mvn clean -Pnative native:compile`
+- Start-up time improvement for `cashoperations` microservice:
+```text
+2025-11-03 14:07:47 [main] INFO  c.e.c.CashoperationsApplication - Started CashoperationsApplication in 12.328 seconds   -> without GraalVM
+2025-11-03 21:53:14 [main] INFO  c.e.c.CashoperationsApplication - Started CashoperationsApplication in 1.791 seconds    -> with GraalVM AOT
+```
+- Build the docker image by navigating to the root folder of every microservice and running the following maven command there:
+```mvn
+   mvn -Pnative spring-boot:build-image
+```
+- If you want to run a separate microservice as a docker container use the following docker command, e.g. for *cashoperations*:
+```docker
+   docker run -d --name cashoperations --network cashoperations-network -p 8080:8080 -e SPRING_RABBITMQ_HOST=rabbitmq -e SPRING_RABBITMQ_PORT=5672 -e SPRING_RABBITMQ_USERNAME=guest -e SPRING_RABBITMQ_PASSWORD=guest -e SPRING_PROFILES_ACTIVE=default -e SPRING_CONFIG_IMPORT=configserver:http://configserver:8071/ -e EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/ -e CASHDESK_LOG_DIR=/workspace/cashdesk -v cashdesk-data:/workspace/cashdesk mvel1603/cashoperations:eurekaserver
+```
+- Grant permissions for the log file writes of cashoperations microservice:
+```linux
+   docker exec -it -uroot <cashoperations-container-id> bash
+   cd ..
+   chmod -f 777 workspace
+   cd workspace
+   chmod -f 777 cashdesk
+```
+
+---
+
 ## New Endpoint - get consolidated response from all available microservices:
 - HTTP GET to http://localhost:8082/cashdocumentsservice/api/v1/fetchCashOperationsDetails?date=2025-10-29
 

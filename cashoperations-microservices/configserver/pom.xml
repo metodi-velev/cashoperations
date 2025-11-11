@@ -84,7 +84,7 @@
                 <version>3.4.2</version>
                 <configuration>
                     <to>
-                        <image>mvel1603/${project.artifactId}:eurekaserver</image>
+                        <image>mvel1603/${project.artifactId}:graalvm</image>
                         <!-- Build the docker image with "mvn compile jib:dockerBuild" command -->
                     </to>
                 </configuration>

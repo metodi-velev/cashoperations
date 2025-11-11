@@ -111,14 +111,14 @@ management:
 # Create a webhook in github with the webhook-url as payload-url. This will automatically
 # send a POST request to Config Server /monitor path after each new push to the config repo
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetchRegistry: true
-    registerWithEureka: true
-    serviceUrl:
-      defaultZone: http://localhost:8070/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetchRegistry: true
+#    registerWithEureka: true
+#    serviceUrl:
+#      defaultZone: http://localhost:8070/eureka/
 
 info:
   app:

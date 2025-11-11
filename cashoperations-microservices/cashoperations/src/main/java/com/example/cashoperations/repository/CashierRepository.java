@@ -6,6 +6,9 @@ import com.example.cashoperations.model.Denomination;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,14 +18,21 @@ import java.util.stream.Collectors;
 @Repository
 public class CashierRepository {
     public static final Map<String, Cashier> CASHIERS = new HashMap<>();
-    public static final String TRANSACTION_FILE = "transactions.txt";
-    public static final String BALANCE_FILE = "balances.txt";
+    private static String logDir = System.getenv().getOrDefault("CASHDESK_LOG_DIR", "/workspace/cashdesk");
+    public static final String TRANSACTION_FILE = String.join("/", logDir, "transactions.txt");
+    public static final String BALANCE_FILE = String.join("/", logDir, "balances.txt");
 
     @PostConstruct
     public void init() {
         CASHIERS.put("MARTINA", createCashier("MARTINA", 1000, 2000));
         CASHIERS.put("PETER", createCashier("PETER", 1000, 2000));
         CASHIERS.put("LINDA", createCashier("LINDA", 1000, 2000));
+
+        try {
+            Files.createDirectories(Paths.get(logDir));
+        } catch (IOException e) {
+            System.err.println("Error creating log directory /workspace/cashdesk. Reason is " + e.getMessage());
+        }
     }
 
     private Cashier createCashier(String name, int bgnBalance, int eurBalance) {

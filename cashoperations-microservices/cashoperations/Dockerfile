@@ -1,40 +1,33 @@
-# ------------------------------
-# Stage 1: Build the application
-# ------------------------------
+# Stage 1: Build the native image
 FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /workspace
 
-# Cache dependencies first
-COPY pom.xml ./
-RUN mvn -B -q -e -U dependency:go-offline
-
-# Copy sources and build
+# Copy project files
+COPY pom.xml .
 COPY src ./src
-RUN mvn -B -q -DskipTests package
 
-# ------------------------------
-# Stage 2: Run the application
-# ------------------------------
-FROM eclipse-temurin:21-jre
+# Build native executable
+RUN mvn -Pnative -DskipTests clean package
 
-# Create non-root user
-RUN useradd -ms /bin/bash appuser
-USER appuser
+# Stage 2: Run stage
+FROM ubuntu:22.04
+
+# Add a user for security (optional)
+RUN useradd -m appuser
 
 WORKDIR /app
 
-# Copy the built jar from the builder stage
-# The artifact name is defined in pom.xml as cashoperations-0.0.1-SNAPSHOT.jar
-COPY --from=builder /workspace/target/cashoperations-0.0.1-SNAPSHOT.jar /app/app.jar
+# Create writable logs directory
+RUN mkdir -p /app/logs && chmod 777 /app/logs
 
-# Environment variables (can be overridden at runtime)
-# Example: docker run -e FIB_AUTH_API_KEY=your-key ...
-ENV JAVA_OPTS=""
+# Copy native binary
+COPY --from=builder /workspace/target/* /app/
 
-# Expose Spring Boot default port
+ENV CASHDESK_LOG_DIR=/app/logs
+
+USER appuser
+
 EXPOSE 8080
 
-# Run the application
-# Use shell form to allow JAVA_OPTS expansion
-ENTRYPOINT sh -c "java $JAVA_OPTS -jar /app/app.jar"
+ENTRYPOINT ["./cashoperations"]

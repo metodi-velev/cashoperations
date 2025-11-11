@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: cashreportingservice
-        image: mvel1603/cashreportingservice:eurekaserver
+        image: mvel1603/cashreportingservice:graalvm
         ports:
         - containerPort: 8081
         env:

@@ -1,6 +1,6 @@
 services:
   cashoperations:
-    image: mvel1603/cashoperations:eurekaserver
+    image: mvel1603/cashoperations:graalvm
     build: .
     container_name: cashoperations
     ports:
@@ -49,7 +49,7 @@ services:
     #   retries: 5
 
   cashreportingservice:
-    image: mvel1603/cashreportingservice:eurekaserver
+    image: mvel1603/cashreportingservice:graalvm
     build: .
     container_name: cashreportingservice
     ports:
@@ -91,7 +91,7 @@ services:
     command: [ "--spring.output.ansi.enabled=ALWAYS" ]
 
   cashdocumentsservice:
-    image: mvel1603/cashdocumentsservice:eurekaserver
+    image: mvel1603/cashdocumentsservice:graalvm
     build: .
     container_name: cashdocumentsservice
     ports:
@@ -128,7 +128,7 @@ services:
     command: [ "--spring.output.ansi.enabled=ALWAYS" ]
 
   configserver:
-    image: mvel1603/configserver:eurekaserver
+    image: mvel1603/configserver:graalvm
     build: .
     container_name: configserver
     ports:
@@ -147,7 +147,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: mvel1603/eurekaserver:eurekaserver
+    image: mvel1603/eurekaserver:graalvm
     build: .
     container_name: eurekaserver
     ports:

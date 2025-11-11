@@ -98,10 +98,6 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
@@ -109,10 +105,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <dependencyManagement>
@@ -130,6 +126,10 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
@@ -145,6 +145,18 @@
                         -XX:ConcGCThreads=4
                         -XX:ParallelGCThreads=8
                     </jvmArguments>
+                    <image>
+                        <name>mvel1603/${project.artifactId}:graalvm</name>
+                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>
+                        <env>
+                            <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                            <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                            <!-- Add these for better compatibility -->
+                            <BPE_DELIM_JAVA_TOOL_OPTIONS xml:space="preserve"> </BPE_DELIM_JAVA_TOOL_OPTIONS>
+                            <BPE_APPEND_JAVA_TOOL_OPTIONS>-Dspring.xml.ignore=true</BPE_APPEND_JAVA_TOOL_OPTIONS>
+                        </env>
+                        <!-- Build the docker image with "mvn spring-boot:build-image" buildpacks command -->
+                    </image>
                 </configuration>
             </plugin>
             <!-- Surefire Plugin (for unit tests) -->
@@ -181,7 +193,7 @@
                 <version>3.4.2</version>
                 <configuration>
                     <to>
-                        <image>mvel1603/${project.artifactId}:eurekaserver</image>
+                        <image>mvel1603/${project.artifactId}:graalvm</image>
                         <!-- Build the docker image with "mvn compile jib:dockerBuild" command -->
                     </to>
                 </configuration>

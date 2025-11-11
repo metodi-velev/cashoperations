@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: cashdocumentsservice
-        image: mvel1603/cashdocumentsservice:eurekaserver
+        image: mvel1603/cashdocumentsservice:graalvm
         ports:
         - containerPort: 8082
         env:
