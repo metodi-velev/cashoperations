@@ -14,7 +14,7 @@
 ```mvn
    mvn -Pnative spring-boot:build-image
 ```
-- If you want to run a separate microservice as a docker container use the following docker command, e.g. for *cashoperations*:
+- If you want to run a separate microservice as a docker container, first start *rabbitmq*, *configserver* and *eurekaserver*, then use the following docker command, e.g. for *cashoperations*:
 ```docker
    docker run -d --name cashoperations --network cashoperations-network -p 8080:8080 -e SPRING_RABBITMQ_HOST=rabbitmq -e SPRING_RABBITMQ_PORT=5672 -e SPRING_RABBITMQ_USERNAME=guest -e SPRING_RABBITMQ_PASSWORD=guest -e SPRING_PROFILES_ACTIVE=default -e SPRING_CONFIG_IMPORT=configserver:http://configserver:8071/ -e EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/ -e CASHDESK_LOG_DIR=/workspace/cashdesk -v cashdesk-data:/workspace/cashdesk mvel1603/cashoperations:graalvm
 ```
