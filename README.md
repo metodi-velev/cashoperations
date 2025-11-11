@@ -21,8 +21,7 @@
 - Grant permissions for the log file writes of cashoperations microservice:
 ```linux
    docker exec -it -uroot <cashoperations-container-id> bash
-   cd ..
-   chmod -R -f 777 workspace
+   chmod -R -f 777 cashdesk
 ```
 
 ---
