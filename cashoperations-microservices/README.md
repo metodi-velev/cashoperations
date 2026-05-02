@@ -280,7 +280,7 @@ HTTP Response body: Mono<ResponseEntity<CashOperationsDetails>>
 
 ## Run the `cashoperations, cashreportingservice and cashdocumentsservice` microservices in a Docker Host:
 ### 1. Open a command prompt in the `docker-compose\default` directory
-### 2. Run `docker-compose up -d` in the terminal
+### 2. Run `docker-compose up -d` command in the terminal
 
 ---
 
