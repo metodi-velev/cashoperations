@@ -77,6 +77,63 @@ class CashBalanceServiceIT {
     }
 
     @Test
+    void shouldFilterByOnlyDateRange() {
+        Params params = initParams(LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1), null);
+
+        List<CashBalanceResponse> cashBalanceResponseList = cashBalanceService.getCashBalances(
+                params.dateFrom(), params.dateTo(), params.cashier()
+        );
+
+        assertFalse(cashBalanceResponseList.isEmpty());
+        assertEquals(3, cashBalanceResponseList.size());
+    }
+
+    @Test
+    void shouldFilterByOnlyDateFrom() {
+        Params params = initParams(LocalDateTime.now().minusDays(1), null, null);
+
+        List<CashBalanceResponse> cashBalanceResponseList = cashBalanceService.getCashBalances(
+                params.dateFrom(), params.dateTo(), params.cashier()
+        );
+
+        assertFalse(cashBalanceResponseList.isEmpty());
+    }
+
+    @Test
+    void shouldFilterByOnlyDateTo() {
+        Params params = initParams(null, LocalDateTime.now().plusDays(1), null);
+
+        List<CashBalanceResponse> cashBalanceResponseList = cashBalanceService.getCashBalances(
+                params.dateFrom(), params.dateTo(), params.cashier()
+        );
+
+        assertFalse(cashBalanceResponseList.isEmpty());
+    }
+
+    @Test
+    void shouldFilterByOnlyCashierName() {
+        Params params = initParams(null, null, "PETER");
+
+        List<CashBalanceResponse> cashBalanceResponseList = cashBalanceService.getCashBalances(
+                params.dateFrom(), params.dateTo(), params.cashier()
+        );
+
+        assertEquals(1, cashBalanceResponseList.size());
+        assertEquals("PETER", cashBalanceResponseList.get(0).getCashier());
+    }
+
+    @Test
+    void shouldReturnEmptyWhenCashierDoesNotExist() {
+        Params params = initParams(null, null, "NON_EXISTENT_CASHIER");
+
+        List<CashBalanceResponse> cashBalanceResponseList = cashBalanceService.getCashBalances(
+                params.dateFrom(), params.dateTo(), params.cashier()
+        );
+
+        assertTrue(cashBalanceResponseList.isEmpty());
+    }
+
+    @Test
     void shouldThrowExceptionWhenDateFromIsAfterDateTo() {
         Params params = initParams(LocalDateTime.now(), LocalDateTime.now().minusDays(1), null);
 
